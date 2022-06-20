@@ -1,0 +1,6 @@
+﻿  pch.cpp
+  ConsoleLog.cpp
+  CoreGlobal.cpp
+  CorePch.cpp
+  Generating Code...
+  ServerCore.vcxproj -> C:\Users\coco\source\repos\UnityMMOServer\Libraries\Libs\ServerCore\Debug\ServerCore.lib
