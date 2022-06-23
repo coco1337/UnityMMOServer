@@ -2,6 +2,7 @@
 
 #include "Types.h"
 #include "CoreMacro.h"
+#include "CoreTLS.h"
 #include "CoreGlobal.h"
 
 //
@@ -26,4 +27,6 @@ using namespace std;
 #include <WS2tcpip.h>
 #pragma comment(lib, "ws2_32.lib")
 
-void HelloWorld();
+#include "Lock.h"
+
+#include "ConsoleLog.h"
