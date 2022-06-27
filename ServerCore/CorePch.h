@@ -30,3 +30,5 @@ using namespace std;
 #include "Lock.h"
 
 #include "ConsoleLog.h"
+#include "TypeCast.h"
+#include "Memory.h"
