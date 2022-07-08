@@ -7,6 +7,9 @@
     <Filter Include="Main">
       <UniqueIdentifier>{88e830f7-67ce-4566-ac58-ff1b790870df}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameContents">
+      <UniqueIdentifier>{d2d227cf-3dcc-46a8-9e43-63735eb12a52}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UnityMMOServer.cpp">
@@ -15,10 +18,34 @@
     <ClCompile Include="pch.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>GameContents</Filter>
+    </ClCompile>
+    <ClCompile Include="Room.cpp">
+      <Filter>GameContents</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSession.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSessionManager.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>GameContents</Filter>
+    </ClInclude>
+    <ClInclude Include="Room.h">
+      <Filter>GameContents</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSession.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSessionManager.h">
+      <Filter>Main</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
