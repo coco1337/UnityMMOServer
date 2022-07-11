@@ -25,6 +25,38 @@ public:
 	void Disconnect(const WCHAR* cause);
 
 	shared_ptr<Service> GetService() { return _service.lock(); }
+	void SetService(shared_ptr<Service> service) { _service = service; }
+
+public:
+	void SetNetAddress(NetAddress address) { _netAddress = address; }
+	NetAddress GetAddress() { return _netAddress; }
+	SOCKET GetSocket() { return _socket; }
+	bool IsConnected() { return _connected; }
+	SessionRef GetSessionRef() { return static_pointer_cast<Session>(shared_from_this()); }
+
+private: // 인터페이스
+	virtual HANDLE GetHandle() override;
+	virtual void Dispatch(class IocpEvent* iocpEcent, int32 numOfBytes = 0) override;
+
+private:
+	/*전송 관련*/
+	bool RegisterConnect();
+	bool RegisterDisconnect();
+	void RegisterRecv();
+	void RegisterSend();
+
+	void ProcessConnect();
+	void ProcessDisconnect();
+	void ProcessRecv(int32 numOfBytes);
+	void ProcessSend(int32 numOfBytes);
+
+	void HandleError(int32 errorCode);
+
+protected:
+	virtual void OnConnected() {}
+	virtual int32 OnRecv(BYTE* buffer, int32 len) { return len; }
+	virtual void OnSend(int32 len) {}
+	virtual void OnDisconnected() {}
 
 private:
 	weak_ptr<Service> _service;

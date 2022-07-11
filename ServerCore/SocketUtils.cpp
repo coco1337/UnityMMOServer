@@ -70,19 +70,27 @@ bool SocketUtils::SetUpdateAcceptSocket(SOCKET socket, SOCKET listenSocket)
 
 bool SocketUtils::Bind(SOCKET socket, NetAddress netAddr)
 {
-	return false;
+	return SOCKET_ERROR != ::bind(socket, reinterpret_cast<const SOCKADDR*>(&netAddr.GetSockAddr()), sizeof(SOCKADDR_IN));
 }
 
 bool SocketUtils::BindAnyAddress(SOCKET socket, uint16 port)
 {
-	return false;
+	SOCKADDR_IN myAddress;
+	myAddress.sin_family = AF_INET;
+	myAddress.sin_addr.s_addr = ::htonl(INADDR_ANY);
+	myAddress.sin_port = ::htons(port);
+
+	return SOCKET_ERROR != ::bind(socket, reinterpret_cast<const SOCKADDR*>(&myAddress), sizeof(myAddress));
 }
 
 bool SocketUtils::Listen(SOCKET socket, int32 backlog)
 {
-	return false;
+	return SOCKET_ERROR != ::listen(socket, backlog);
 }
 
 void SocketUtils::Close(SOCKET& socket)
 {
+	if (socket != INVALID_SOCKET)
+		::closesocket(socket);
+	socket = INVALID_SOCKET;
 }
