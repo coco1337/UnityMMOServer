@@ -10,6 +10,9 @@
     <Filter Include="GameContents">
       <UniqueIdentifier>{d2d227cf-3dcc-46a8-9e43-63735eb12a52}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Protocol">
+      <UniqueIdentifier>{690eebdd-a6ff-4aef-97a1-09ce0da881a6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UnityMMOServer.cpp">
@@ -30,6 +33,9 @@
     <ClCompile Include="GameSessionManager.cpp">
       <Filter>Main</Filter>
     </ClCompile>
+    <ClCompile Include="Protocol.pb.cc">
+      <Filter>Protocol</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -46,6 +52,9 @@
     </ClInclude>
     <ClInclude Include="GameSessionManager.h">
       <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Protocol.pb.h">
+      <Filter>Protocol</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
