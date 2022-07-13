@@ -1,6 +1,7 @@
 #pragma once
 class BufferReader
 {
+public:
 	BufferReader();
 	BufferReader(BYTE* buffer, uint32 size, uint32 pos = 0);
 	~BufferReader();

@@ -32,6 +32,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Room.cpp" />
+    <ClCompile Include="ServerPacketHandler.cpp" />
     <ClCompile Include="UnityMMOServer.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -41,6 +42,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Protocol.pb.h" />
     <ClInclude Include="Room.h" />
+    <ClInclude Include="ServerPacketHandler.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
