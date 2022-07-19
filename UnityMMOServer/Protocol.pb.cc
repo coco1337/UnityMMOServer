@@ -50,7 +50,7 @@ struct S_LOGINDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 S_LOGINDefaultTypeInternal _S_LOGIN_default_instance_;
 }  // namespace Protocol
 static ::_pb::Metadata file_level_metadata_Protocol_2eproto[2];
-static const ::_pb::EnumDescriptor* file_level_enum_descriptors_Protocol_2eproto[2];
+static constexpr ::_pb::EnumDescriptor const** file_level_enum_descriptors_Protocol_2eproto = nullptr;
 static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_Protocol_2eproto = nullptr;
 
 const uint32_t TableStruct_Protocol_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -83,11 +83,9 @@ static const ::_pb::Message* const file_default_instances[] = {
 
 const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
   "\n\016Protocol.proto\022\010Protocol\032\nEnum.proto\032\014"
-  "Struct.proto\"x\n\006S_TEST\022\n\n\002id\030\001 \001(\004\022\n\n\002hp"
+  "Struct.proto\"S\n\006S_TEST\022\n\n\002id\030\001 \001(\004\022\n\n\002hp"
   "\030\002 \001(\r\022\016\n\006attack\030\003 \001(\r\022!\n\005buffs\030\004 \003(\0132\022."
-  "Protocol.BuffData\"#\n\010PacketId\022\010\n\004NONE\020\000\022"
-  "\r\n\tPACKET_ID\020\001\".\n\007S_LOGIN\"#\n\010PacketId\022\010\n"
-  "\004NONE\020\000\022\r\n\tPACKET_ID\020\002b\006proto3"
+  "Protocol.BuffData\"\t\n\007S_LOGINb\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -95,7 +93,7 @@ static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_de
 };
 static ::_pbi::once_flag descriptor_table_Protocol_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_Protocol_2eproto = {
-    false, false, 230, descriptor_table_protodef_Protocol_2eproto,
+    false, false, 156, descriptor_table_protodef_Protocol_2eproto,
     "Protocol.proto",
     &descriptor_table_Protocol_2eproto_once, descriptor_table_Protocol_2eproto_deps, 2, 2,
     schemas, file_default_instances, TableStruct_Protocol_2eproto::offsets,
@@ -109,48 +107,6 @@ PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_Protocol
 // Force running AddDescriptors() at dynamic initialization time.
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_Protocol_2eproto(&descriptor_table_Protocol_2eproto);
 namespace Protocol {
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* S_TEST_PacketId_descriptor() {
-  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_Protocol_2eproto);
-  return file_level_enum_descriptors_Protocol_2eproto[0];
-}
-bool S_TEST_PacketId_IsValid(int value) {
-  switch (value) {
-    case 0:
-    case 1:
-      return true;
-    default:
-      return false;
-  }
-}
-
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-constexpr S_TEST_PacketId S_TEST::NONE;
-constexpr S_TEST_PacketId S_TEST::PACKET_ID;
-constexpr S_TEST_PacketId S_TEST::PacketId_MIN;
-constexpr S_TEST_PacketId S_TEST::PacketId_MAX;
-constexpr int S_TEST::PacketId_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* S_LOGIN_PacketId_descriptor() {
-  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_Protocol_2eproto);
-  return file_level_enum_descriptors_Protocol_2eproto[1];
-}
-bool S_LOGIN_PacketId_IsValid(int value) {
-  switch (value) {
-    case 0:
-    case 2:
-      return true;
-    default:
-      return false;
-  }
-}
-
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
-constexpr S_LOGIN_PacketId S_LOGIN::NONE;
-constexpr S_LOGIN_PacketId S_LOGIN::PACKET_ID;
-constexpr S_LOGIN_PacketId S_LOGIN::PacketId_MIN;
-constexpr S_LOGIN_PacketId S_LOGIN::PacketId_MAX;
-constexpr int S_LOGIN::PacketId_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
 // ===================================================================
 

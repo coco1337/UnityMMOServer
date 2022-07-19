@@ -64,7 +64,7 @@
     <None Include="..\Common\Protobuf\bin\Protocol.proto" />
     <None Include="..\Common\Protobuf\bin\Struct.proto" />
   </ItemGroup>
-    <ItemGroup>
+  <ItemGroup>
     <UpToDateCheckInput Include="..\Common\Protobuf\bin\Enum.proto" />
     <UpToDateCheckInput Include="..\Common\Protobuf\bin\Protocol.proto" />
     <UpToDateCheckInput Include="..\Common\Protobuf\bin\Struct.proto" />
