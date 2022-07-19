@@ -30,7 +30,6 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/repeated_field.h>  // IWYU pragma: export
 #include <google/protobuf/extension_set.h>  // IWYU pragma: export
-#include <google/protobuf/generated_enum_reflection.h>
 #include <google/protobuf/unknown_field_set.h>
 #include "Enum.pb.h"
 #include "Struct.pb.h"
@@ -62,56 +61,6 @@ template<> ::Protocol::S_TEST* Arena::CreateMaybeMessage<::Protocol::S_TEST>(Are
 PROTOBUF_NAMESPACE_CLOSE
 namespace Protocol {
 
-enum S_TEST_PacketId : int {
-  S_TEST_PacketId_NONE = 0,
-  S_TEST_PacketId_PACKET_ID = 1,
-  S_TEST_PacketId_S_TEST_PacketId_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
-  S_TEST_PacketId_S_TEST_PacketId_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
-};
-bool S_TEST_PacketId_IsValid(int value);
-constexpr S_TEST_PacketId S_TEST_PacketId_PacketId_MIN = S_TEST_PacketId_NONE;
-constexpr S_TEST_PacketId S_TEST_PacketId_PacketId_MAX = S_TEST_PacketId_PACKET_ID;
-constexpr int S_TEST_PacketId_PacketId_ARRAYSIZE = S_TEST_PacketId_PacketId_MAX + 1;
-
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* S_TEST_PacketId_descriptor();
-template<typename T>
-inline const std::string& S_TEST_PacketId_Name(T enum_t_value) {
-  static_assert(::std::is_same<T, S_TEST_PacketId>::value ||
-    ::std::is_integral<T>::value,
-    "Incorrect type passed to function S_TEST_PacketId_Name.");
-  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
-    S_TEST_PacketId_descriptor(), enum_t_value);
-}
-inline bool S_TEST_PacketId_Parse(
-    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, S_TEST_PacketId* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<S_TEST_PacketId>(
-    S_TEST_PacketId_descriptor(), name, value);
-}
-enum S_LOGIN_PacketId : int {
-  S_LOGIN_PacketId_NONE = 0,
-  S_LOGIN_PacketId_PACKET_ID = 2,
-  S_LOGIN_PacketId_S_LOGIN_PacketId_INT_MIN_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::min(),
-  S_LOGIN_PacketId_S_LOGIN_PacketId_INT_MAX_SENTINEL_DO_NOT_USE_ = std::numeric_limits<int32_t>::max()
-};
-bool S_LOGIN_PacketId_IsValid(int value);
-constexpr S_LOGIN_PacketId S_LOGIN_PacketId_PacketId_MIN = S_LOGIN_PacketId_NONE;
-constexpr S_LOGIN_PacketId S_LOGIN_PacketId_PacketId_MAX = S_LOGIN_PacketId_PACKET_ID;
-constexpr int S_LOGIN_PacketId_PacketId_ARRAYSIZE = S_LOGIN_PacketId_PacketId_MAX + 1;
-
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* S_LOGIN_PacketId_descriptor();
-template<typename T>
-inline const std::string& S_LOGIN_PacketId_Name(T enum_t_value) {
-  static_assert(::std::is_same<T, S_LOGIN_PacketId>::value ||
-    ::std::is_integral<T>::value,
-    "Incorrect type passed to function S_LOGIN_PacketId_Name.");
-  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
-    S_LOGIN_PacketId_descriptor(), enum_t_value);
-}
-inline bool S_LOGIN_PacketId_Parse(
-    ::PROTOBUF_NAMESPACE_ID::ConstStringParam name, S_LOGIN_PacketId* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<S_LOGIN_PacketId>(
-    S_LOGIN_PacketId_descriptor(), name, value);
-}
 // ===================================================================
 
 class S_TEST final :
@@ -231,36 +180,6 @@ class S_TEST final :
   ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
 
   // nested types ----------------------------------------------------
-
-  typedef S_TEST_PacketId PacketId;
-  static constexpr PacketId NONE =
-    S_TEST_PacketId_NONE;
-  static constexpr PacketId PACKET_ID =
-    S_TEST_PacketId_PACKET_ID;
-  static inline bool PacketId_IsValid(int value) {
-    return S_TEST_PacketId_IsValid(value);
-  }
-  static constexpr PacketId PacketId_MIN =
-    S_TEST_PacketId_PacketId_MIN;
-  static constexpr PacketId PacketId_MAX =
-    S_TEST_PacketId_PacketId_MAX;
-  static constexpr int PacketId_ARRAYSIZE =
-    S_TEST_PacketId_PacketId_ARRAYSIZE;
-  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
-  PacketId_descriptor() {
-    return S_TEST_PacketId_descriptor();
-  }
-  template<typename T>
-  static inline const std::string& PacketId_Name(T enum_t_value) {
-    static_assert(::std::is_same<T, PacketId>::value ||
-      ::std::is_integral<T>::value,
-      "Incorrect type passed to function PacketId_Name.");
-    return S_TEST_PacketId_Name(enum_t_value);
-  }
-  static inline bool PacketId_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
-      PacketId* value) {
-    return S_TEST_PacketId_Parse(name, value);
-  }
 
   // accessors -------------------------------------------------------
 
@@ -437,36 +356,6 @@ class S_LOGIN final :
 
   // nested types ----------------------------------------------------
 
-  typedef S_LOGIN_PacketId PacketId;
-  static constexpr PacketId NONE =
-    S_LOGIN_PacketId_NONE;
-  static constexpr PacketId PACKET_ID =
-    S_LOGIN_PacketId_PACKET_ID;
-  static inline bool PacketId_IsValid(int value) {
-    return S_LOGIN_PacketId_IsValid(value);
-  }
-  static constexpr PacketId PacketId_MIN =
-    S_LOGIN_PacketId_PacketId_MIN;
-  static constexpr PacketId PacketId_MAX =
-    S_LOGIN_PacketId_PacketId_MAX;
-  static constexpr int PacketId_ARRAYSIZE =
-    S_LOGIN_PacketId_PacketId_ARRAYSIZE;
-  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
-  PacketId_descriptor() {
-    return S_LOGIN_PacketId_descriptor();
-  }
-  template<typename T>
-  static inline const std::string& PacketId_Name(T enum_t_value) {
-    static_assert(::std::is_same<T, PacketId>::value ||
-      ::std::is_integral<T>::value,
-      "Incorrect type passed to function PacketId_Name.");
-    return S_LOGIN_PacketId_Name(enum_t_value);
-  }
-  static inline bool PacketId_Parse(::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
-      PacketId* value) {
-    return S_LOGIN_PacketId_Parse(name, value);
-  }
-
   // accessors -------------------------------------------------------
 
   // @@protoc_insertion_point(class_scope:Protocol.S_LOGIN)
@@ -601,21 +490,6 @@ S_TEST::buffs() const {
 // @@protoc_insertion_point(namespace_scope)
 
 }  // namespace Protocol
-
-PROTOBUF_NAMESPACE_OPEN
-
-template <> struct is_proto_enum< ::Protocol::S_TEST_PacketId> : ::std::true_type {};
-template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::S_TEST_PacketId>() {
-  return ::Protocol::S_TEST_PacketId_descriptor();
-}
-template <> struct is_proto_enum< ::Protocol::S_LOGIN_PacketId> : ::std::true_type {};
-template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::Protocol::S_LOGIN_PacketId>() {
-  return ::Protocol::S_LOGIN_PacketId_descriptor();
-}
-
-PROTOBUF_NAMESPACE_CLOSE
 
 // @@protoc_insertion_point(global_scope)
 

@@ -5,7 +5,9 @@ PacketHandlerFunc GPacketHandler[UINT16_MAX];
 
 bool Handle_INVALID(PacketSessionRef& sesison, BYTE* buffer, int32 len)
 {
-	return true;
+	PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+	// TODO : log
+	return false;
 }
 
 bool Handle_S_TEST(PacketSessionRef& session, Protocol::S_TEST& pkt)
