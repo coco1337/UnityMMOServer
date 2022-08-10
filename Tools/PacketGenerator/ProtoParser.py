@@ -1,8 +1,8 @@
 class ProtoParser():
     def __init__(self, start_id, recv_prefix, send_prefix):
-        self.recv_pkt = [] # 수신 패킷 목록
-        self.send_pkt = [] # 송신 패킷 목록
-        self.total_pkt = [] # 모든 패킷 목록
+        self.recv_pkt = [] # send packets
+        self.send_pkt = [] # recv packets
+        self.total_pkt = [] # all packets
         self.start_id = start_id
         self.id = start_id
         self.recv_prefix = recv_prefix
