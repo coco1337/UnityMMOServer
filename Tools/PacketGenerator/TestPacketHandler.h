@@ -18,7 +18,7 @@ enum : uint16 {
 bool Handle_INVALID(PacketSessionRef& session, BYTE* buffer, int32 len);
 bool Handle_C_TEST(PacketSessionRef& session, Protocol::C_TEST& pkt);
 
-class b'TestPacketHandler'
+class TestPacketHandler
 {
 public:
 	static void Init() {
