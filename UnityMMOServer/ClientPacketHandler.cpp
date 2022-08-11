@@ -19,3 +19,8 @@ bool Handle_CS_LOGIN(PacketSessionRef& session, Protocol::CS_LOGIN& pkt)
 {
 	return false;
 }
+
+bool Handle_S_TEST(PacketSessionRef& session, Protocol::CS_TEST& pkt)
+{
+	return true;
+}
