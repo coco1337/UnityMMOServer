@@ -9,14 +9,10 @@ extern PacketHandlerFunc GPacketHandler[UINT16_MAX];
 
 // TODO
 enum : uint16 {
-  PKT_C_TEST = 1000,
-  PKT_S_TEST = 1001,
-  PKT_S_LOGIN = 1002,
 };
 
 // Custom Handlers
 bool Handle_INVALID(PacketSessionRef& session, BYTE* buffer, int32 len);
-bool Handle_C_TEST(PacketSessionRef& session, Protocol::C_TEST& pkt);
 
 class TestPacketHandler
 {
@@ -24,7 +20,6 @@ public:
 	static void Init() {
     for (int32 i = 0; i < UINT16_MAX; ++i)
 			GPacketHandler[0] = Handle_INVALID;
-    GPacketHandler[PKT_C_TEST] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::C_TEST>(Handle_C_TEST, session, buffer, len); };
   }
 
 	static bool HandlePacket(PacketSessionRef& session, BYTE* buffer, int32 len) {
@@ -33,8 +28,6 @@ public:
   }
 
 	// TODO
-	static SendBufferRef MakeSendBuffer(Protocol::S_TEST& pkt) { return _MakeSendBuffer(pkt, PKT_S_TEST); }
-	static SendBufferRef MakeSendBuffer(Protocol::S_LOGIN& pkt) { return _MakeSendBuffer(pkt, PKT_S_LOGIN); }
 
 private:
   template<typename PacketType, typename ProcessFunc>
