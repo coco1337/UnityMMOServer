@@ -42,7 +42,7 @@ bool IocpCore::Dispatch(uint32 timeoutMs)
 			break;
 		}
 	}
-	return false;
+	return true;
 }
 
 

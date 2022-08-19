@@ -14,7 +14,7 @@ int main()
 	ClientPacketHandler::Init();
 
 	ServerServiceRef service = MakeShared<ServerService>(
-		NetAddress(L"127.0.0.1", 7777),
+		NetAddress(L"192.168.50.254", 8888),
 		MakeShared<IocpCore>(),
 		MakeShared<GameSession>, // TODO : SessionManager µî
 		100

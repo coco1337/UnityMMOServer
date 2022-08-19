@@ -10,6 +10,7 @@ public:
 
 private:
 	map<uint64, PlayerRef> _players;
+	uint64 roomId;
 };
 
 extern shared_ptr<Room> GRoom;

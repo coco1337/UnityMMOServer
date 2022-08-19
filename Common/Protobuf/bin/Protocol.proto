@@ -23,3 +23,17 @@ message CS_LOGIN
 	uint64 id = 1;
 	PlayerType playerType = 2;
 }
+
+message CS_REGISTERREQ
+{
+	uint64 id = 1;
+	string userId = 2;
+	string password = 3;
+}
+
+message SC_REGISTERRES
+{
+	uint64 id = 1;
+	bool result = 2;
+	string uid = 3;
+}
