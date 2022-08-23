@@ -28,5 +28,5 @@ message SC_LOGIN_RES
 {
 	uint64 id = 1;
 	PacketErrorType packetResult = 2;
-	string uid = 3;
+	int32 uid = 3;
 }

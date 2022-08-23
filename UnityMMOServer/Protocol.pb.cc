@@ -67,9 +67,9 @@ struct CS_LOGIN_REQDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 CS_LOGIN_REQDefaultTypeInternal _CS_LOGIN_REQ_default_instance_;
 PROTOBUF_CONSTEXPR SC_LOGIN_RES::SC_LOGIN_RES(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.uid_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_.id_)*/uint64_t{0u}
+    /*decltype(_impl_.id_)*/uint64_t{0u}
   , /*decltype(_impl_.packetresult_)*/0
+  , /*decltype(_impl_.uid_)*/0
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct SC_LOGIN_RESDefaultTypeInternal {
   PROTOBUF_CONSTEXPR SC_LOGIN_RESDefaultTypeInternal()
@@ -145,7 +145,7 @@ const char descriptor_table_protodef_Protocol_2eproto[] PROTOBUF_SECTION_VARIABL
   "\014CS_LOGIN_REQ\022\n\n\002id\030\001 \001(\004\022\016\n\006userId\030\002 \001("
   "\t\022\020\n\010password\030\003 \001(\t\"X\n\014SC_LOGIN_RES\022\n\n\002i"
   "d\030\001 \001(\004\022/\n\014packetResult\030\002 \001(\0162\031.Protocol"
-  ".PacketErrorType\022\013\n\003uid\030\003 \001(\tb\006proto3"
+  ".PacketErrorType\022\013\n\003uid\030\003 \001(\005b\006proto3"
   ;
 static const ::_pbi::DescriptorTable* const descriptor_table_Protocol_2eproto_deps[2] = {
   &::descriptor_table_Enum_2eproto,
@@ -958,23 +958,15 @@ SC_LOGIN_RES::SC_LOGIN_RES(const SC_LOGIN_RES& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   SC_LOGIN_RES* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.uid_){}
-    , decltype(_impl_.id_){}
+      decltype(_impl_.id_){}
     , decltype(_impl_.packetresult_){}
+    , decltype(_impl_.uid_){}
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.uid_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.uid_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_uid().empty()) {
-    _this->_impl_.uid_.Set(from._internal_uid(), 
-      _this->GetArenaForAllocation());
-  }
   ::memcpy(&_impl_.id_, &from._impl_.id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.packetresult_) -
-    reinterpret_cast<char*>(&_impl_.id_)) + sizeof(_impl_.packetresult_));
+    static_cast<size_t>(reinterpret_cast<char*>(&_impl_.uid_) -
+    reinterpret_cast<char*>(&_impl_.id_)) + sizeof(_impl_.uid_));
   // @@protoc_insertion_point(copy_constructor:Protocol.SC_LOGIN_RES)
 }
 
@@ -983,15 +975,11 @@ inline void SC_LOGIN_RES::SharedCtor(
   (void)arena;
   (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.uid_){}
-    , decltype(_impl_.id_){uint64_t{0u}}
+      decltype(_impl_.id_){uint64_t{0u}}
     , decltype(_impl_.packetresult_){0}
+    , decltype(_impl_.uid_){0}
     , /*decltype(_impl_._cached_size_)*/{}
   };
-  _impl_.uid_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.uid_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 SC_LOGIN_RES::~SC_LOGIN_RES() {
@@ -1005,7 +993,6 @@ SC_LOGIN_RES::~SC_LOGIN_RES() {
 
 inline void SC_LOGIN_RES::SharedDtor() {
   GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.uid_.Destroy();
 }
 
 void SC_LOGIN_RES::SetCachedSize(int size) const {
@@ -1018,10 +1005,9 @@ void SC_LOGIN_RES::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.uid_.ClearToEmpty();
   ::memset(&_impl_.id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&_impl_.packetresult_) -
-      reinterpret_cast<char*>(&_impl_.id_)) + sizeof(_impl_.packetresult_));
+      reinterpret_cast<char*>(&_impl_.uid_) -
+      reinterpret_cast<char*>(&_impl_.id_)) + sizeof(_impl_.uid_));
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1048,13 +1034,11 @@ const char* SC_LOGIN_RES::_InternalParse(const char* ptr, ::_pbi::ParseContext* 
         } else
           goto handle_unusual;
         continue;
-      // string uid = 3;
+      // int32 uid = 3;
       case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 26)) {
-          auto str = _internal_mutable_uid();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 24)) {
+          _impl_.uid_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "Protocol.SC_LOGIN_RES.uid"));
         } else
           goto handle_unusual;
         continue;
@@ -1100,14 +1084,10 @@ uint8_t* SC_LOGIN_RES::_InternalSerialize(
       2, this->_internal_packetresult(), target);
   }
 
-  // string uid = 3;
-  if (!this->_internal_uid().empty()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_uid().data(), static_cast<int>(this->_internal_uid().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "Protocol.SC_LOGIN_RES.uid");
-    target = stream->WriteStringMaybeAliased(
-        3, this->_internal_uid(), target);
+  // int32 uid = 3;
+  if (this->_internal_uid() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(3, this->_internal_uid(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1126,13 +1106,6 @@ size_t SC_LOGIN_RES::ByteSizeLong() const {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string uid = 3;
-  if (!this->_internal_uid().empty()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_uid());
-  }
-
   // uint64 id = 1;
   if (this->_internal_id() != 0) {
     total_size += ::_pbi::WireFormatLite::UInt64SizePlusOne(this->_internal_id());
@@ -1142,6 +1115,11 @@ size_t SC_LOGIN_RES::ByteSizeLong() const {
   if (this->_internal_packetresult() != 0) {
     total_size += 1 +
       ::_pbi::WireFormatLite::EnumSize(this->_internal_packetresult());
+  }
+
+  // int32 uid = 3;
+  if (this->_internal_uid() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(this->_internal_uid());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -1162,14 +1140,14 @@ void SC_LOGIN_RES::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::P
   uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_uid().empty()) {
-    _this->_internal_set_uid(from._internal_uid());
-  }
   if (from._internal_id() != 0) {
     _this->_internal_set_id(from._internal_id());
   }
   if (from._internal_packetresult() != 0) {
     _this->_internal_set_packetresult(from._internal_packetresult());
+  }
+  if (from._internal_uid() != 0) {
+    _this->_internal_set_uid(from._internal_uid());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -1187,16 +1165,10 @@ bool SC_LOGIN_RES::IsInitialized() const {
 
 void SC_LOGIN_RES::InternalSwap(SC_LOGIN_RES* other) {
   using std::swap;
-  auto* lhs_arena = GetArenaForAllocation();
-  auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &_impl_.uid_, lhs_arena,
-      &other->_impl_.uid_, rhs_arena
-  );
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(SC_LOGIN_RES, _impl_.packetresult_)
-      + sizeof(SC_LOGIN_RES::_impl_.packetresult_)
+      PROTOBUF_FIELD_OFFSET(SC_LOGIN_RES, _impl_.uid_)
+      + sizeof(SC_LOGIN_RES::_impl_.uid_)
       - PROTOBUF_FIELD_OFFSET(SC_LOGIN_RES, _impl_.id_)>(
           reinterpret_cast<char*>(&_impl_.id_),
           reinterpret_cast<char*>(&other->_impl_.id_));

@@ -31,7 +31,7 @@ namespace Protocol {
             "bC5QYWNrZXRFcnJvclR5cGUiPAoMQ1NfTE9HSU5fUkVREgoKAmlkGAEgASgE",
             "Eg4KBnVzZXJJZBgCIAEoCRIQCghwYXNzd29yZBgDIAEoCSJYCgxTQ19MT0dJ",
             "Tl9SRVMSCgoCaWQYASABKAQSLwoMcGFja2V0UmVzdWx0GAIgASgOMhkuUHJv",
-            "dG9jb2wuUGFja2V0RXJyb3JUeXBlEgsKA3VpZBgDIAEoCWIGcHJvdG8z"));
+            "dG9jb2wuUGFja2V0RXJyb3JUeXBlEgsKA3VpZBgDIAEoBWIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Protocol.EnumReflection.Descriptor, global::Protocol.StructReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -869,13 +869,13 @@ namespace Protocol {
 
     /// <summary>Field number for the "uid" field.</summary>
     public const int UidFieldNumber = 3;
-    private string uid_ = "";
+    private int uid_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Uid {
+    public int Uid {
       get { return uid_; }
       set {
-        uid_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        uid_ = value;
       }
     }
 
@@ -906,7 +906,7 @@ namespace Protocol {
       int hash = 1;
       if (Id != 0UL) hash ^= Id.GetHashCode();
       if (PacketResult != global::Protocol.PacketErrorType.Failed) hash ^= PacketResult.GetHashCode();
-      if (Uid.Length != 0) hash ^= Uid.GetHashCode();
+      if (Uid != 0) hash ^= Uid.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -933,9 +933,9 @@ namespace Protocol {
         output.WriteRawTag(16);
         output.WriteEnum((int) PacketResult);
       }
-      if (Uid.Length != 0) {
-        output.WriteRawTag(26);
-        output.WriteString(Uid);
+      if (Uid != 0) {
+        output.WriteRawTag(24);
+        output.WriteInt32(Uid);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -955,9 +955,9 @@ namespace Protocol {
         output.WriteRawTag(16);
         output.WriteEnum((int) PacketResult);
       }
-      if (Uid.Length != 0) {
-        output.WriteRawTag(26);
-        output.WriteString(Uid);
+      if (Uid != 0) {
+        output.WriteRawTag(24);
+        output.WriteInt32(Uid);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -975,8 +975,8 @@ namespace Protocol {
       if (PacketResult != global::Protocol.PacketErrorType.Failed) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) PacketResult);
       }
-      if (Uid.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Uid);
+      if (Uid != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Uid);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -996,7 +996,7 @@ namespace Protocol {
       if (other.PacketResult != global::Protocol.PacketErrorType.Failed) {
         PacketResult = other.PacketResult;
       }
-      if (other.Uid.Length != 0) {
+      if (other.Uid != 0) {
         Uid = other.Uid;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -1022,8 +1022,8 @@ namespace Protocol {
             PacketResult = (global::Protocol.PacketErrorType) input.ReadEnum();
             break;
           }
-          case 26: {
-            Uid = input.ReadString();
+          case 24: {
+            Uid = input.ReadInt32();
             break;
           }
         }
@@ -1049,8 +1049,8 @@ namespace Protocol {
             PacketResult = (global::Protocol.PacketErrorType) input.ReadEnum();
             break;
           }
-          case 26: {
-            Uid = input.ReadString();
+          case 24: {
+            Uid = input.ReadInt32();
             break;
           }
         }

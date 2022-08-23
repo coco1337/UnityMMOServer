@@ -710,24 +710,10 @@ class SC_LOGIN_RES final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kUidFieldNumber = 3,
     kIdFieldNumber = 1,
     kPacketResultFieldNumber = 2,
+    kUidFieldNumber = 3,
   };
-  // string uid = 3;
-  void clear_uid();
-  const std::string& uid() const;
-  template <typename ArgT0 = const std::string&, typename... ArgT>
-  void set_uid(ArgT0&& arg0, ArgT... args);
-  std::string* mutable_uid();
-  PROTOBUF_NODISCARD std::string* release_uid();
-  void set_allocated_uid(std::string* uid);
-  private:
-  const std::string& _internal_uid() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_uid(const std::string& value);
-  std::string* _internal_mutable_uid();
-  public:
-
   // uint64 id = 1;
   void clear_id();
   uint64_t id() const;
@@ -746,6 +732,15 @@ class SC_LOGIN_RES final :
   void _internal_set_packetresult(::Protocol::PacketErrorType value);
   public:
 
+  // int32 uid = 3;
+  void clear_uid();
+  int32_t uid() const;
+  void set_uid(int32_t value);
+  private:
+  int32_t _internal_uid() const;
+  void _internal_set_uid(int32_t value);
+  public:
+
   // @@protoc_insertion_point(class_scope:Protocol.SC_LOGIN_RES)
  private:
   class _Internal;
@@ -754,9 +749,9 @@ class SC_LOGIN_RES final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr uid_;
     uint64_t id_;
     int packetresult_;
+    int32_t uid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -1105,54 +1100,24 @@ inline void SC_LOGIN_RES::set_packetresult(::Protocol::PacketErrorType value) {
   // @@protoc_insertion_point(field_set:Protocol.SC_LOGIN_RES.packetResult)
 }
 
-// string uid = 3;
+// int32 uid = 3;
 inline void SC_LOGIN_RES::clear_uid() {
-  _impl_.uid_.ClearToEmpty();
+  _impl_.uid_ = 0;
 }
-inline const std::string& SC_LOGIN_RES::uid() const {
+inline int32_t SC_LOGIN_RES::_internal_uid() const {
+  return _impl_.uid_;
+}
+inline int32_t SC_LOGIN_RES::uid() const {
   // @@protoc_insertion_point(field_get:Protocol.SC_LOGIN_RES.uid)
   return _internal_uid();
 }
-template <typename ArgT0, typename... ArgT>
-inline PROTOBUF_ALWAYS_INLINE
-void SC_LOGIN_RES::set_uid(ArgT0&& arg0, ArgT... args) {
- 
- _impl_.uid_.Set(static_cast<ArgT0 &&>(arg0), args..., GetArenaForAllocation());
+inline void SC_LOGIN_RES::_internal_set_uid(int32_t value) {
+  
+  _impl_.uid_ = value;
+}
+inline void SC_LOGIN_RES::set_uid(int32_t value) {
+  _internal_set_uid(value);
   // @@protoc_insertion_point(field_set:Protocol.SC_LOGIN_RES.uid)
-}
-inline std::string* SC_LOGIN_RES::mutable_uid() {
-  std::string* _s = _internal_mutable_uid();
-  // @@protoc_insertion_point(field_mutable:Protocol.SC_LOGIN_RES.uid)
-  return _s;
-}
-inline const std::string& SC_LOGIN_RES::_internal_uid() const {
-  return _impl_.uid_.Get();
-}
-inline void SC_LOGIN_RES::_internal_set_uid(const std::string& value) {
-  
-  _impl_.uid_.Set(value, GetArenaForAllocation());
-}
-inline std::string* SC_LOGIN_RES::_internal_mutable_uid() {
-  
-  return _impl_.uid_.Mutable(GetArenaForAllocation());
-}
-inline std::string* SC_LOGIN_RES::release_uid() {
-  // @@protoc_insertion_point(field_release:Protocol.SC_LOGIN_RES.uid)
-  return _impl_.uid_.Release();
-}
-inline void SC_LOGIN_RES::set_allocated_uid(std::string* uid) {
-  if (uid != nullptr) {
-    
-  } else {
-    
-  }
-  _impl_.uid_.SetAllocated(uid, GetArenaForAllocation());
-#ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (_impl_.uid_.IsDefault()) {
-    _impl_.uid_.Set("", GetArenaForAllocation());
-  }
-#endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:Protocol.SC_LOGIN_RES.uid)
 }
 
 #ifdef __GNUC__
