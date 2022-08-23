@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GameDB>
+	<Table name="UserBase">
+		<Column name="uid" type="int" notnull="true" identity="1,1"/>
+		<Column name="userId" type="nvarchar(50)" notnull="true"/>
+		<Column name="userPw" type="nvarchar(200)" notnull="true"/>
+		<Column name="createDate" type="datetime" notnull="true" default="GETDATE()"/>
+		<Index type="clustered">
+			<PrimaryKey/>
+			<Column name="uid"/>
+		</Index>
+	</Table>
+
+	<Procedure name="spRegisterUser">
+		<Param name="@accId" type="nvarchar(50)"/>
+		<Param name="@accPw" type="nvarchar(200)"/>
+		<Body>
+			<![CDATA[
+				INSERT INTO [dbo].[UserBase]([userId], [userPw]) VALUES(@accId, @accPw)
+			]]>
+		</Body>
+	</Procedure>
+
+	<Procedure name="spGetUserLoginInfo">
+		<Param name="@id" type="nvarchar(50)"/>
+		<Param name="@pw" type="nvarchar(200)"/>
+		<Body>
+			<![CDATA[
+				SELECT uid FROM [dbo].[UserBase] WHERE userId=(@id) AND userPw=(@pw)
+			]]>
+		</Body>
+	</Procedure>
+</GameDB>

@@ -24,23 +24,22 @@ namespace Protocol {
     static EnumReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "CgpFbnVtLnByb3RvEghQcm90b2NvbCpoCgpQbGF5ZXJUeXBlEhQKEFBMQVlF",
-            "Ul9UWVBFX05PTkUQABIWChJQTEFZRVJfVFlQRV9LTklHSFQQARIUChBQTEFZ",
-            "RVJfVFlQRV9NQUdFEAISFgoSUExBWUVSX1RZUEVfQVJDSEVSEANiBnByb3Rv",
-            "Mw=="));
+            "CgpFbnVtLnByb3RvEghQcm90b2NvbCp0Cg9QYWNrZXRFcnJvclR5cGUSHAoY",
+            "UEFDS0VUX0VSUk9SX1RZUEVfRkFJTEVEEAASHQoZUEFDS0VUX0VSUk9SX1RZ",
+            "UEVfU1VDQ0VTUxABEiQKIFBBQ0tFVF9FUlJPUl9UWVBFX1JFR0lTVEVSX0VS",
+            "Uk9SEAJiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Protocol.PlayerType), }, null, null));
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Protocol.PacketErrorType), }, null, null));
     }
     #endregion
 
   }
   #region Enums
-  public enum PlayerType {
-    [pbr::OriginalName("PLAYER_TYPE_NONE")] None = 0,
-    [pbr::OriginalName("PLAYER_TYPE_KNIGHT")] Knight = 1,
-    [pbr::OriginalName("PLAYER_TYPE_MAGE")] Mage = 2,
-    [pbr::OriginalName("PLAYER_TYPE_ARCHER")] Archer = 3,
+  public enum PacketErrorType {
+    [pbr::OriginalName("PACKET_ERROR_TYPE_FAILED")] Failed = 0,
+    [pbr::OriginalName("PACKET_ERROR_TYPE_SUCCESS")] Success = 1,
+    [pbr::OriginalName("PACKET_ERROR_TYPE_REGISTER_ERROR")] RegisterError = 2,
   }
 
   #endregion

@@ -4,36 +4,29 @@ package Protocol;
 import "Enum.proto";
 import "Struct.proto";
 
-message SC_TEST
-{
-	uint64 id = 1;
-
-}
-
-message CS_TEST 
-{
-	uint64 id = 1;
-	uint32 hp = 2;
-	uint32 attack = 3;
-	repeated BuffData buffs = 4;
-}
-
-message CS_LOGIN
-{
-	uint64 id = 1;
-	PlayerType playerType = 2;
-}
-
-message CS_REGISTERREQ
+message CS_REGISTER_REQ
 {
 	uint64 id = 1;
 	string userId = 2;
 	string password = 3;
 }
 
-message SC_REGISTERRES
+message SC_REGISTER_RES
 {
 	uint64 id = 1;
-	bool result = 2;
+	PacketErrorType packetResult = 2;
+}
+
+message CS_LOGIN_REQ
+{
+	uint64 id = 1;
+	string userId = 2;
+	string password = 3;
+}
+
+message SC_LOGIN_RES
+{
+	uint64 id = 1;
+	PacketErrorType packetResult = 2;
 	string uid = 3;
 }

@@ -13,6 +13,9 @@
     <Filter Include="Protocol">
       <UniqueIdentifier>{690eebdd-a6ff-4aef-97a1-09ce0da881a6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DB">
+      <UniqueIdentifier>{26f7bbc1-4160-497c-8f67-560d72e9d7ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UnityMMOServer.cpp">
@@ -74,6 +77,9 @@
     <ClInclude Include="Struct.pb.h">
       <Filter>Protocol</Filter>
     </ClInclude>
+    <ClInclude Include="GenProcedures.h">
+      <Filter>DB</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Common\Protobuf\bin\Enum.proto">
@@ -88,5 +94,13 @@
     <None Include="..\Common\Protobuf\bin\GenPacket.bat">
       <Filter>Protocol</Filter>
     </None>
+    <None Include="..\Common\Procedures\GenProcedures.bat">
+      <Filter>DB</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="GameDB.xml">
+      <Filter>DB</Filter>
+    </Xml>
   </ItemGroup>
 </Project>
