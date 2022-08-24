@@ -13,12 +13,15 @@ enum : uint16 {
   PKT_SC_REGISTER_RES = 1001,
   PKT_CS_LOGIN_REQ = 1002,
   PKT_SC_LOGIN_RES = 1003,
+  PKT_CS_SEND_CHAT_REQ = 1004,
+  PKT_SC_CHAT_NOTI = 1005,
 };
 
 // Custom Handlers
 bool Handle_INVALID(PacketSessionRef& session, BYTE* buffer, int32 len);
 bool Handle_CS_REGISTER_REQ(PacketSessionRef& session, Protocol::CS_REGISTER_REQ& pkt);
 bool Handle_CS_LOGIN_REQ(PacketSessionRef& session, Protocol::CS_LOGIN_REQ& pkt);
+bool Handle_CS_SEND_CHAT_REQ(PacketSessionRef& session, Protocol::CS_SEND_CHAT_REQ& pkt);
 
 class ClientPacketHandler
 {
@@ -28,6 +31,7 @@ public:
 			GPacketHandler[0] = Handle_INVALID;
     GPacketHandler[PKT_CS_REGISTER_REQ] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::CS_REGISTER_REQ>(Handle_CS_REGISTER_REQ, session, buffer, len); };
     GPacketHandler[PKT_CS_LOGIN_REQ] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::CS_LOGIN_REQ>(Handle_CS_LOGIN_REQ, session, buffer, len); };
+    GPacketHandler[PKT_CS_SEND_CHAT_REQ] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::CS_SEND_CHAT_REQ>(Handle_CS_SEND_CHAT_REQ, session, buffer, len); };
   }
 
 	static bool HandlePacket(PacketSessionRef& session, BYTE* buffer, int32 len) {
@@ -38,6 +42,7 @@ public:
 	// TODO
 	static SendBufferRef MakeSendBuffer(Protocol::SC_REGISTER_RES& pkt) { return _MakeSendBuffer(pkt, PKT_SC_REGISTER_RES); }
 	static SendBufferRef MakeSendBuffer(Protocol::SC_LOGIN_RES& pkt) { return _MakeSendBuffer(pkt, PKT_SC_LOGIN_RES); }
+	static SendBufferRef MakeSendBuffer(Protocol::SC_CHAT_NOTI& pkt) { return _MakeSendBuffer(pkt, PKT_SC_CHAT_NOTI); }
 
 private:
   template<typename PacketType, typename ProcessFunc>

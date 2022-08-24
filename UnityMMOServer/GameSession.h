@@ -1,12 +1,20 @@
 #pragma once
 #include "Session.h"
+#include "Player.h"
 
 class GameSession : public PacketSession
 {
 public:
 	~GameSession()
 	{
-		cout << "~GameSession" << endl;
+		if (_currentPlayer == nullptr)
+		{
+			GConsoleLogger->WriteStdOut(Color::GREEN, L"~GameSession\n");
+		}
+		else
+		{
+			GConsoleLogger->WriteStdOut(Color::GREEN, L"~GameSession %s\n",_currentPlayer->name );
+		}
 	}
 
 	virtual void OnConnected() override;

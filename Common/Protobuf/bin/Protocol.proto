@@ -30,3 +30,16 @@ message SC_LOGIN_RES
 	PacketErrorType packetResult = 2;
 	int32 uid = 3;
 }
+
+message CS_SEND_CHAT_REQ
+{
+	uint64 id = 1;
+	string msg = 2;
+}
+
+message SC_CHAT_NOTI
+{
+	uint64 id = 1;
+	string senderId = 2;
+	string msg = 3;
+}

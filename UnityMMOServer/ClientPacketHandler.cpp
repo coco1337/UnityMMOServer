@@ -2,6 +2,9 @@
 #include "ClientPacketHandler.h"
 #include "DBConnectionPool.h"
 #include "GenProcedures.h"
+#include "GameSession.h"
+#include "Player.h"
+#include "Room.h"
 using Protocol::PacketErrorType;
 
 PacketHandlerFunc GPacketHandler[UINT16_MAX];
@@ -95,5 +98,29 @@ bool Handle_CS_LOGIN_REQ(PacketSessionRef& session, Protocol::CS_LOGIN_REQ& pkt)
 	auto sendBuffer = ClientPacketHandler::MakeSendBuffer(res);
 	session->Send(sendBuffer);
 
+	// create player	
+	auto player = MakeShared<Player>();
+	player->name = pkt.userid();
+	player->playerId = uid;
+
+	auto gameSession = static_pointer_cast<GameSession>(session);
+	gameSession->_currentPlayer = player;
+	player->ownerSession = gameSession;
+	
+	GRoom->DoAsync(&Room::Enter, player);
+
+	return true;
+}
+
+bool Handle_CS_SEND_CHAT_REQ(PacketSessionRef& session, Protocol::CS_SEND_CHAT_REQ& pkt)
+{
+	Protocol::SC_CHAT_NOTI res;
+	res.set_id(PKT_SC_CHAT_NOTI);
+
+	GameSessionRef gameSession = static_pointer_cast<GameSession>(session);
+	res.set_senderid(gameSession->_currentPlayer->name);
+	res.set_msg(pkt.msg());
+
+	GRoom->DoAsync(&Room::Broadcast, ClientPacketHandler::MakeSendBuffer(res));
 	return true;
 }

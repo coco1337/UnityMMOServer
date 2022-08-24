@@ -8,6 +8,7 @@ shared_ptr<Room> GRoom = make_shared<Room>();
 void Room::Enter(PlayerRef player)
 {
 	_players[player->playerId] = player;
+	GConsoleLogger->WriteStdOut(Color::BLUE, L"player joined %d\n", player->playerId);
 }
 
 void Room::Leave(PlayerRef player)
@@ -17,8 +18,10 @@ void Room::Leave(PlayerRef player)
 
 void Room::Broadcast(SendBufferRef sendBuffer)
 {
+	GameSessionRef gameSession;
 	for (auto& p : _players)
 	{
-		p.second->ownerSession->Send(sendBuffer);
+		gameSession = p.second->ownerSession.lock();
+		gameSession->Send(sendBuffer);
 	}
 }
