@@ -51,6 +51,7 @@ public:
 	int64				_incrementValue = 0;
 	String				_default;
 	String				_defaultConstraintName; // DB
+	bool				_unique = false;
 };
 
 /*-----------
