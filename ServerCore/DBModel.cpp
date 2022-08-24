@@ -10,11 +10,12 @@ using namespace DBModel;
 String Column::CreateText()
 {
 	return DBModel::Helpers::Format(
-		L"[%s] %s %s %s",
+		L"[%s] %s %s %s %s",
 		_name.c_str(),
 		_typeText.c_str(),
 		_nullable ? L"NULL" : L"NOT NULL",
-		_identity ? DBModel::Helpers::Format(L"IDENTITY(%d, %d)", _seedValue, _incrementValue).c_str() : L"");
+		_identity ? DBModel::Helpers::Format(L"IDENTITY(%d, %d)", _seedValue, _incrementValue).c_str() : L"",
+		_unique ? L"UNIQUE" : L"");
 }
 
 /*-----------

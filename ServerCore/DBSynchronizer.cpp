@@ -125,6 +125,7 @@ void DBSynchronizer::ParseXmlDB(const WCHAR* path)
 			c->_type = DBModel::Helpers::String2DataType(c->_typeText.c_str(), OUT c->_maxLength);
 			ASSERT_CRASH(c->_type != DBModel::DataType::None);
 			c->_nullable = !column.GetBoolAttr(L"notnull", false);
+			c->_unique = column.GetBoolAttr(L"unique", false);
 
 			const WCHAR* identityStr = column.GetStringAttr(L"identity");
 			if (::wcslen(identityStr) > 0)

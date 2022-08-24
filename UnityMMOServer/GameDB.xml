@@ -2,7 +2,7 @@
 <GameDB>
 	<Table name="UserBase">
 		<Column name="uid" type="int" notnull="true" identity="1,1"/>
-		<Column name="userId" type="nvarchar(50)" notnull="true"/>
+		<Column name="userId" type="nvarchar(50)" notnull="true" unique="true"/>
 		<Column name="userPw" type="nvarchar(200)" notnull="true"/>
 		<Column name="createDate" type="datetime" notnull="true" default="GETDATE()"/>
 		<Index type="clustered">
