@@ -28,7 +28,7 @@ message SC_LOGIN_RES
 {
 	uint64 id = 1;
 	PacketErrorType packetResult = 2;
-	int32 uid = 3;
+	optional int32 uid = 3;
 }
 
 message CS_SEND_CHAT_REQ
@@ -40,6 +40,32 @@ message CS_SEND_CHAT_REQ
 message SC_CHAT_NOTI
 {
 	uint64 id = 1;
-	string senderId = 2;
-	string msg = 3;
+	PacketErrorType packetResult = 2;
+	optional string senderId = 3;
+	optional string msg = 4;
+}
+
+message CS_SPAWN_REQ
+{
+	uint64 id = 1;
+}
+
+message SC_SPAWN_RES
+{
+	uint64 id = 1;
+	PacketErrorType packetResult = 2;
+	repeated PlayerData players = 3;
+	optional uint64 myId = 4;
+}
+
+message SC_SPAWN_NOTI
+{
+	uint64 id = 1;
+	PlayerData player = 2;
+}
+
+message SC_DESPAWN_NOTI
+{
+	uint64 id = 1;
+	uint64 uid = 2;
 }

@@ -3,9 +3,24 @@ package Protocol;
 
 import "Enum.proto";
 
-message BuffData 
+message PlayerData 
 {
-	uint64 buffId = 1;
-	float remainTime = 2;
-	repeated uint64 victims = 3;
+	uint64 uid = 1;
+	string userName = 2;
+	Position position = 3;
+	Rotation rotation = 4;
+}
+
+message Position
+{
+	float x = 1;
+	float y = 2;
+	float z = 3;
+}
+
+message Rotation
+{
+	float x = 1;
+	float y = 2;
+	float z = 3;
 }

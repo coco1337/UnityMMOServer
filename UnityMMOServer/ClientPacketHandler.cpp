@@ -25,6 +25,8 @@ bool Handle_CS_REGISTER_REQ(PacketSessionRef& session, Protocol::CS_REGISTER_REQ
 	wstring id = wstring(pkt.userid().begin(), pkt.userid().end());
 	wstring pw = wstring(pkt.password().begin(), pkt.password().end());
 
+	// TOOD : id, pw 예외 처리 필요(NVARCHAR값을 넘었는지 등 체크)
+
 	WCHAR userId[50];
 	WCHAR userPw[200];
 	wmemset(userId, L'\0', 50);
@@ -72,19 +74,19 @@ bool Handle_CS_LOGIN_REQ(PacketSessionRef& session, Protocol::CS_LOGIN_REQ& pkt)
 	wmemcpy(userId, id.c_str(), id.size());
 	wmemcpy(userPw, pw.c_str(), pw.size());
 
-	int32 uid = 0;
+	int32 uid = -1;
 
 	SP::GetUserLoginInfo getUserLoginInfo(*dbConn);
 	getUserLoginInfo.In_Id(userId);
 	getUserLoginInfo.In_Pw(userPw);
 	getUserLoginInfo.Out_Uid(OUT uid);
 
-	if (!getUserLoginInfo.Execute() || uid == 0)
+	if (!getUserLoginInfo.Execute() || !getUserLoginInfo.Fetch() || uid == -1)
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"Handle_CS_LOGIN_REQ failed.\n");
 		GDBConnectionPool->Push(dbConn);
 		res.set_packetresult(PacketErrorType::PACKET_ERROR_TYPE_FAILED);
-		res.set_uid(0);
+		res.set_uid(0); 
 		auto sendBuffer = ClientPacketHandler::MakeSendBuffer(res);
 		session->Send(sendBuffer);
 		return false;
@@ -122,5 +124,25 @@ bool Handle_CS_SEND_CHAT_REQ(PacketSessionRef& session, Protocol::CS_SEND_CHAT_R
 	res.set_msg(pkt.msg());
 
 	GRoom->DoAsync(&Room::Broadcast, ClientPacketHandler::MakeSendBuffer(res));
+	return true;
+}
+
+bool Handle_CS_SPAWN_REQ(PacketSessionRef& session, Protocol::CS_SPAWN_REQ& pkt)
+{
+	Protocol::SC_SPAWN_RES res;
+	res.set_id(PKT_SC_SPAWN_RES);
+
+	auto gameSession = static_pointer_cast<GameSession>(session);
+
+	Vector<Protocol::PlayerData> players;
+	GRoom->GetAllPlayerData(players);
+
+	res.set_packetresult(PacketErrorType::PACKET_ERROR_TYPE_SUCCESS);
+	res.set_myid(gameSession->_currentPlayer->playerId);
+
+	for (auto p : players) *res.mutable_players()->Add() = p;
+
+	session->Send(ClientPacketHandler::MakeSendBuffer(res));
+
 	return true;
 }
