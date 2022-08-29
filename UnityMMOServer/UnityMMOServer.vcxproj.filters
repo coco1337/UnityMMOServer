@@ -103,4 +103,7 @@
       <Filter>DB</Filter>
     </Xml>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Note.txt" />
+  </ItemGroup>
 </Project>

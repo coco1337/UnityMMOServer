@@ -79,7 +79,7 @@ bool Handle_CS_LOGIN_REQ(PacketSessionRef& session, Protocol::CS_LOGIN_REQ& pkt)
 	getUserLoginInfo.In_Pw(userPw);
 	getUserLoginInfo.Out_Uid(OUT uid);
 
-	if (!getUserLoginInfo.Execute())
+	if (!getUserLoginInfo.Execute() || uid == 0)
 	{
 		GConsoleLogger->WriteStdErr(Color::RED, L"Handle_CS_LOGIN_REQ failed.\n");
 		GDBConnectionPool->Push(dbConn);

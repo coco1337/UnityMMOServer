@@ -74,6 +74,9 @@
   <ItemGroup>
     <Xml Include="GameDB.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Note.txt" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

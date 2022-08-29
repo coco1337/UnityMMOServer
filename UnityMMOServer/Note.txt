@@ -1,0 +1,806 @@
+Atomic
+atomic : All-Or-Nothing
+sum++;
+는 일반적으로
+int32 eax = sum;
+eax = eax + 1;
+sum = eax;
+의 과정을 거침
+
+atomic 끼리는 경합을 통해 실행이 되며 나머지는 기다리게된다. (병목현상 유발 가능)
+-> atomic은 느림, 실행순서는 cpu가 결정
+
+----------------------------------------------------
+Lock의 기초
+일반적인 자료구조는 멀티스레드 환경에서는 작동하지 않는다(vector 등등)
+멀티 스레드 환경에서는 다른 스레드를 기다리지 않음
+vector는 영역 추가할때 기존 영역 추가하고 복사한뒤 남은거 삭제
+-> 다른 스레드가 삭제된 부분 접근하려할수있음
+기본적으로 vector 관리하는 방식은 index 기준으로 처리하기 때문에
+멀티스레드 환경에서는 해당 인덱스에 여러 데이터가 들어가서 덮어씌워지는 경우가 있음
+그렇다고 atomic<vector<int>>는 불가능 -> vector의 세부 기능을 사용할 수 없음
+
+mutex(Mutual Exclusive)는 일종의 자물쇠, 상호배타적
+lock 을 사용하면 unlock이 되기 전까지 다른 스레드에서 접근 불가
+막 사용하면 경합이 심해져서 느려질 수 있음
+
+lock을 재귀적으로 걸 수 있는가? -> mutex는 못함, reculsive mutex 사용하면 되긴하지만
+지금은 X
+
+실수로 lock 을 안풀었으면 다른 스레드는 접근하지 못하게 됨 -> 예외처리 등의 문제에서
+lock을 안풀어버리는 경우가 생길 수 있음 -> RAII 패턴(Resource Acquisition Is Initialization)
+wrapper 클래스를 만들어서 생성자와 소멸자 이용, 자동으로 lock, unlock 하도록,
+std::lock_guard 
+
+std::unique_lock lock_guard + 옵션 사용해서 나중에 lock 할 수 있음
+std::unique_lock<std::mutex> uniqueLock(m, std::defer_lock);
+uniqueLock.lock();
+
+락을 거는 범위에 따라 많은게 달라질 수 있음
+
+------------------------------------------------------
+Deadlock
+lockguard 써도 일어나는 deadlock 상황(null pointer 크래시 등), 언젠 발생하고 언젠 발생하지않음
+lock의 순서를 맞춰줘서 해결할 수 있음(언제나 가능한것은 아님, 락끼리 id 부여해서 그걸로 비교가능 하지만 힘듦)
+
+mutex m1;
+mutex m2;
+std::lock(m1, m2); 가 가능하긴 하지만 많이 사용하지 않음 // m1.lock(); m2.lock(); -> 일관적인 순서 보장
+lock_guard<mutex> g1(m1, std::adopt_lock); adopt_lock : 이미 lock 됐으니까 소멸될때 풀어주기만
+lock_guard<mutex> g2(m2, std::adopt_lock);
+
+--------------------------------------------------------
+Lock 구현 이론
+context switching - 유저레벨 커널레벨 왔다갔다하는것 -> 램과 레지스터사이의 정보 이동 필요, 부담이 큼
+일어날 수 밖에 없기 때문에 최소화 해주는 것이 맞음
+
+----------------------------------------------------------
+SpinLock(존버메타)
+면접에 많이 나오기 때문에 숙지
+뻉뺑이 돌면서 락 획득
+c++ 에서의 volatile 키워드는 컴파일러에게 최적화를 하지 못하게만 해줌
+c#는 메모리, 가시성 등등에서 변화가 생김
+
+CAS(Compare-And-Swap)
+bool expected = false;
+bool desired = true;
+
+// CAS 의사 코드
+if (_locked == expected) {
+	expected = _locked;
+	_locked = desired;
+	return true;
+} else {
+	expected = _locked;
+	return false;
+}
+
+_locked.compare_exchange_strong(expected, desired);
+
+커널모드로 들어가는 컨텍스트 스위칭 없이 유저모드에서 뺑뺑이 돌면서 기다림 -> 스핀락끼리 무한루프돌게되면 cpu 점유율 올라감
+
+----------------------------------------------------------
+Sleep
+운영체제의 스케줄링과 관련있음
+스케줄러가 프로그램 실행할때 실행 소유권과 time slice 줘서 그동안 돌리고 나서 실행 소유권을 커널로 돌려줌
+System call(커널에 요청) -> 커널에서 요청받은 일 한 뒤 다시 -> 유저모드로
+Sleep 하면 커널로
+this_thread::yield(); == this_thread::sleep_for(0ms);
+시스템콜을 줄여야 함
+
+----------------------------------------------------------
+Event
+C#에서는 auto reset, manual reset 두개로 나뉘어짐
+어느정도 대기가 필요할 때 사용하면 효율적
+HANDLE handle = ::CreateEvent(NULL/*보안속성*/, FALSE/*bManualReset*/, FALSE/*bInitialState*/, NULL); // 커널에서 만들어 줌, 커널오브젝트
+
+커널 오브젝트, event 는 다른 커널오브젝트에 비해 비용이 작음
+Usage Count
+Signal(파란불) / Non-Signal(빨간불) << bool
+Auto / manual << bool
+
+::SetEvent(handle);
+::WaitForSingleObject(handle, INFINITE); signal 상태 확인해서 sleep할지 실행할지 정함
+Manual 상태면 
+::ResetEvent(handle); 해줘야되고 아니면 자동으로 됨
+
+----------------------------------------------------------
+Condition Variable
+condition_variable cv; => UserLevel obeject, 커널 오브젝트가 아님(커널 레벨에서 동작시 이벤트 이용해서 다른 프로그램도 사용가능)
+// 1) Lock을 잡고
+// 2) 공유 변수 값 수정
+// 3) Lock 풀고
+// 4) 조건 변수 통해서 다른 쓰레드에게 통지
+
+cv.notify_one(); // wait 중인 스레드 1개를 깨움
+cv.wait(lock, []() {return q.empty() == false; }); // q.empty() == false 까지 기다림
+// 1) Lock을 잡고
+// 2) 조건 확인, 만족 => 빠져나와서 코드 실행, 불만족 => Lock을 풀고 대기상태로 전환(이것 때문에 unique_lock 사용(원할때 걸고 풀 수 있도록))
+// notify_one 을 했으면 항상 조건식을 만족하지 않을까? => Superious Wakeup(가짜 기상?) 멀티스레드 환경에서는 notify_one 할때는 lock 잡고있는것 아니기때문에 공용변수 변경 가능
+
+----------------------------------------------------------
+Future - 명시적으로 스레드를 만들 필요 없이 멀티스레드 간접적으로 사용
+데이터 시트 불러올때 사용
+{
+	// 1) deferred -> lazy evaluation 지연해서 실행(멀티스레드가 아님) - 커맨드 패턴의 전형적인 패턴
+	// 2) async -> 별도의 스레드를 만들어서 병렬로 실행
+	// 3) deffered | async -> 둘 중 알아서 고르기
+	std::future<int64> future = std::async(std::launch::async, Calculate);
+		
+	// TODO
+	std::future_status status = future.wait_for(1ms);	// 1ms 기다려보기
+	if (status == future_status::ready) {	// ready 상태 -> 해당 함수가 다 끝남
+
+	}
+
+	int64 sum = future.get(); // 결과물이 필요할때 사용, 돌아올때까지 기다림
+
+
+	class Knight {
+	public:
+		int64 GetHp() { return 100; }
+	};
+
+	Knight knight;
+	std::future<int64> future2 = std::async(std::launch::async, &Knight::GetHp, knight); // 멤버함수 사용가능
+}
+
+// std::promise
+{
+	// 미래(std::future)에 결과물을 반환해줄거라 약속(std::promise)
+	std::promise<string> promise;	// promise는 스레드에 넘겨주고
+	std::future<string> future = promise.get_future(); // 갖고있고
+	// pending 상태
+	thread t(PromiseWorker, std::move(promise));
+
+	string message = future.get();	// 데이터 호출시 future는 empty 상태가 됨(2번 호출 X)
+	cout << message << endl;
+
+	t.join();
+}
+
+// std::packaged_task
+{
+	std::packaged_task<int64(void)> task(Calculate);	// 함수의 signature를 맞춰줘야 함, Calculate를 일감단위로 만들어서 스레드로 넘겨줌
+	std::future<int64> future = task.get_future();
+
+	std::thread t(TaskWorker, std::move(task)); // 결과물 자체가 future 객체를 통해 알수있게됨
+	int64 sum = future.get();
+	cout << sum << endl;
+	t.join();
+}
+
+mutex, condition_variable 까지 가지 않고 단순한 애들을 처리할 수 있는
+1회성으로 일어나는 이벤트에 대해서 좋은 방법
+future는 Calculate를 위한 전용 스레드 생성해서 처리
+packaged_task는 스레드 만든 후에 task를 여러개 넘겨줄 수 있음(여러 task 전달하도록 만들 수 있음)
+
+async - 원하는 함수를 비동기적으로 실행
+promise - 결과물을 promise를 통해 future로 받아줌
+packaged_task - 원하는 함수의 실행 결과를 packaged_task를 통해 future로 받아줌
+
+비동기(실행시점이 다름) != 멀티스레드
+
+----------------------------------------------------------
+캐시
+1) Temporal locality - 시간 기준(비슷한 시간에 사용된 데이터들)
+2) Spatial locality - 공간 기준(인접한 데이터들)
+
+캐시에 있는 데이터를 사용할 수 있으면 cache hit
+
+----------------------------------------------------------
+CPU 파이프라인
+가시성과 코드 재배치
+가시성이 보장되지않음
+void Thread_1() {
+	while (!ready);
+	y = 1; // store y
+	r1 = x; // load x
+}
+
+void Thread_2() {
+	while (!ready);
+	x = 1; // store x
+	r2 = y; // load y
+}
+
+y = 1이 실행되기 전에 r2 = y 부분이 먼저 실행되면 r2 = 0이 됨 -> 가시성 보장되지않음
+컴파일러, cpu가 단일스레드에서 결과물이 같다고 판단되면 실행 순서를 바꿀수 있음 -> 코드 재배치 문제 발생
+
+cpu도 fetch -> decode -> execute -> write-back의 순서로 병렬실행되는데 순서가 바뀌었을때 좀더 빠르면 cpu가 바꿀 수 있음
+
+----------------------------------------------------------
+메모리 모델
+여러 스레드가 동일한 메모리에 접근, 그 중 하나는 write 연산할때
+결과는 경합 조건이 발생(race condition)
+
+atomic 연산에 한해 모든 스레드가 '동일 객체'에 대해 '동일한 수정 순서'를 관찰
+시간의 흐름에 따라 과거값으로 변경될 수가 없음, 하지만 가시성 문제를 해결할 수 없음
+
+atomic<int64> num;
+num.store(1, memory_order::memory_order_seq_cst);
+int64 value = num.load(memory_order::memory_order_seq_cst);
+
+
+
+// flag = true;
+flag.store(true, std::memory_order_seq_cst);
+
+// bool val = flag;
+bool val = flag.load(std::memory_order_seq_cst);
+
+// 이전 flag 값을 prev에 넣고 flag 값 수정
+{
+	bool prev = flag.exchange(true);
+	// bool prev = flag; flag = true; 2번에 나눠서 하면 원자적인 연산이 아니기 때문에 문제 생길 수 있음
+}
+
+// CAS 조건부 수정
+{
+	bool expected = false;
+	bool desired = true;
+	flag.compare_exchange_strong(expected, desired); // weak 보다는 부담, 루프 돌면서 성공할 때까지 돌림(묘한상황 처리에서 달라짐)
+	flag.compare_exchange_weak(expected, desired); // 기본적인 형태
+}
+
+
+
+// atomic 에서의 Memory model(정책)
+// 1) Sequentially consistent(seq_cst)
+// 2) acquire_Release(consume(문제많음), acquire, release, acq_rel(acq+rel))
+// 3) relaxed(relaxed)
+
+// 1) seq_cst(가장 엄격 = 컴파일러 최적화 여지 적음 = 직관적) - 가시성문제 해결, 코드 재배치 문제도 해결
+// 2) acquire-release - 중간 단계, release 명령 이전의 메모리 명령들이 그 이후로 넘어가는건 불가능
+	(이전 코드들은 순서 바뀔수 있음), 
+	acquire로 같은 변수를 읽는 쓰레드가 있다면 release 이전의 명령들이 acquire 순간에 관찰 가능 - 가시성 보장
+// 3) relaxed(자유롭다 = 컴파일러 최적화 여지 많음 = 직관적이지 않음) - 사용할 일이 없음
+
+인텔 AMD 의 경우 애당초 순차적 일관성 보장을 해서 seq_cst를 써도 별다른 부하가 없음
+ARM의 경우 꽤 차이가 있음
+
+std::atomic_thread_fence - 있지만 별 필요 없음
+
+----------------------------------------------------------
+Thread local storage
+스레드마다 갖고있는 개별 storage
+c++ 11 부터 __declspec(thread)가 아닌 thread_local 사용가능
+
+----------------------------------------------------------
+Lock-based stack / queue
+
+----------------------------------------------------------
+Lock-Free Stack
+Lock-Free 라고 해도 대기상태가 없는것은 아님
+shared_ptr도 lockfree로 동작하는지 알수가 없음
+atomic_is_lock_free(&ptr); 로 확인
+lock 방식은 한번에 한번만
+lock-free 방식은 모두 재실행됨
+
+----------------------------------------------------------
+Lock-Free Queue
+push = head, pop = tail
+하지만 동일한 노드를 건드릴 수 있기 때문에 그것을 방지하기 위해
+externalCountRemaining 추가
+참조권 놓아줄때도 internalCount 체크해서 진짜 삭제할지 확인, 아니면 release
+push에도 삭제하는 코드가 있는 이유 : pop도 동시에 같은 노드를 가리키고 있으면 pop 할때 delete 해버리면 push할때 nullptr가리키고 있어서 에러 발생할수있음
+
+
+----------------------------------------------------------
+Reader-writer lock
+표준 mutex는 재귀로 lock을 잡을 수가 없음
+상호배타적인 특성이 필요한 부분이 있을수 있음
+기존 데이터를 read 하는경우에는 자유롭게 접근, write 할때만 경합하도록 함
+Write 락 같은 경우 RW 모두 잡고있지않거나 동일 스레드가 소유하고있으면 사용 가능
+
+동일 스레드 내에서
+Write lock -> Read lock은 가능
+Read lock -> Write lock 은 불가능(read는 여러 스레드가 접근할수 있음)
+
+----------------------------------------------------------
+Reference counting
+생명주기 정책과 관련
+
+----------------------------------------------------------
+스마트 포인터 - 면접 단골
+직접 구현한경우
+1) 이미 만들어진 클래스 대상으로는 사용 불가
+2) 순환(cycle) 문제 // 서로 ref count를 물고있어서 절대 지워지지 않음
+
+unique_ptr 생포인터와 비슷, 유일하게 다른것은 복사하는 부분이 막혀있음, std::move로 소유권까지 넘겨야함
+shared_ptr
+// [Knight][RefCountingBlock]
+
+// [T*] [RefCountBlocking*] 2개의 정보를 따로따로
+shared_ptr<Knight> spr(new Knight());
+make_shared<Knight>() -> T 와 RefCountingBlock을 같이 생성
+new Knight() -> T 따로 RefCountingBlock 따로 생성
+
+weak_ptr
+weak_ptr<Knight> wpr = spr;
+bool expired = wpr.expired(); // 존채 체크
+shared_ptr<Knight> spr2 = wpr.lock(); // 혹은 shared_ptr로 변환해서 사용, wpr이 nullptr이면 shared_ptr도 nullptr
+// RefCountBlock(useCount(shared) /*useCount가 0이면 T는 유효하지 않음*/, weakCount/*블록 자체는 남겨뒀다가 객체가 사라졌는지여부를 알수있음 하지만 T에는 영향이 없음*/)
+
+----------------------------------------------------------
+Allocator
+Stomp Allocator
+Use-After-Free 문제 등을 알아채는데 사용
+
+	vector<int32> v{ 1,2,3,4,5 };
+	for (int32 i = 0; i < 5; i++) {
+		int32 value = v[i];
+		// TODO
+		if (value == 3) {
+			v.clear();	// 여기서부터v는 유효하지 않은데 이후에 접근, 메모리 오염생김
+		}
+	}
+
+캐스팅 문제로 오버플로우등 문제 발생가능
+
+	SYSTEM_INFO info;
+	::GetSystemInfo(&info);
+
+	info.dwPageSize;
+	info.dwAllocationGranularity;
+
+	::VirtualAlloc
+	::VirtualFree()
+
+
+	int* test = (int*)::VirtualAlloc(NULL, 4, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+	*test = 100;
+	::VirtualFree(test, 0, MEM_RELEASE);
+	new delete는 delete 후에도 메모리가 남아있을 수 있음 -> 접근하면 메모리 오염 발생
+
+Use-After_free 문제는 해결되지만 오버플로우 문제는 해결 못함
+데이터 위치를 Alloc한 메모리의 끝부분에 위치
+
+----------------------------------------------------------
+STL Allocator
+
+----------------------------------------------------------
+Memory Pool
+context switching,
+메모리 파편화 등 문제 발생 가능
+동일한 크기의 데이터끼리 관리 혹은 유동적으로 관리하는 방법이 있는데 주로 첫번째 방법 사용
+
+ABA 문제 - 카운터를 사용해서 해결
+CAS 연산에서 발생하는 문제
+(동일한 메모리 주소에 데이터 덮어쓰기 했을경우 발생)
+
+----------------------------------------------------------
+Typecast
+Player* p1 = new Knight();
+Player* p2 = new Mage();
+
+Knight* k1 = static_cast<Knight*>(p1);
+하지만 Knight* k1 = static_cast<Mage*>(p1) 도 가능함 -> 메모리 오염 가능성 있음
+dynamic_cast 사용해도 해결되지만 속도가 느림
+
+----------------------------------------------------------
+send와 recv는 블로킹 함수
+소켓 입출력 버퍼 사용
+버퍼가 꽉차면 블로킹됨
+데이터의 경계가 없음(후에 데이터에 크기 포함해서 보내야 함) -> 데이터가 일부분만 갈수도 있음
+
+----------------------------------------------------------
+tcp
+연결을 위해 할당되는 논리적 경로가 있음
+데이터 경계가 없음
+전송 순서 보장
+분실시 다시 전송 -> 신뢰성
+주고받을 상황이 아니면 일부만 보냄(흐름, 혼잡제어)
+고려사항이 많기때문에 속도가 상대적으로 느림
+
+udp
+연결이라는 개념이 없음
+데이터 경계가 있음
+전송순서 보장되지 않음
+분실 책임 없음
+보내고 생각
+단순하기 때문에 속도가 상대적으로 빠름
+
+----------------------------------------------------------
+Connected UDP
+연결 대상이 등록은 됨
+기본은 unconnected UDP
+보안 측면에서 가급적 TCP 를 활용해야 함
+
+----------------------------------------------------------
+socketopt
+SO_KEEPALIVE = 주기적으로 연결상태 확인 여부(TCP) - 상대가 연결 끊으면 확인 불가,
+TCP 프로토콜 연결상태를 주기적으로 확인
+
+SO_LINGER = 지연하다
+send -> closesocket 해버리면 전송중에 연결이 끊기게 되는데
+송신버퍼에 있는 데이터를 보낼지 날릴지 확인
+l_onoff : 0이면 closesocket이 바로 return, 아니면 해당 시간만큼 대기
+l_linger : 대기 시간
+
+Half-Close
+SD_SEND : send 막기
+SD_RECEIVE : recv 막기
+SD_BOTH : 둘다 막기
+
+SO_SNDBUF : send 버퍼 크기
+SO_RCVBUF : recv 버퍼 크기
+
+SO_REUSEADDR : 사용중인 주소를 재사용(다른 프로그램이 사용중일 수도 있고, 서버 재시동중에 찌꺼기가 남을 수 있기 때문에
+강제로 해당 주소를 재사용)
+
+IPPROTO_TCP
+TCP_NODELAY = Nagle 네이글 알고리즘 작동 여부
+데이터가 충분히 크면 보내고 아니면 쌓일때까지 대기 (데이터를 뭉쳐서 보냄->효율적) -> 유저레벨에서 관리 가능
+장점 : 작은패킷이 불필요하게 많이 생성되는일을 방지
+단점 : 반응 시간 손해
+
+----------------------------------------------------------
+블로킹 소켓
+accept -> 접속한 클라가 있을 때
+connect -> 서버 접속 성공 했을 때
+send, sendto -> 요청한 데이터를 송신 버퍼에 복사했을 때
+recv, recvfrom -> 수신 버퍼에 도착한 데이터가 있고 이를 유저 레벨 버퍼에 복사했을때
+
+논블로킹 소켓
+필요하긴 하지만 모든 문제가 해결되는것은 아님
+(준비 되지 않은 경우 쓸데없이 cpu 낭비)
+
+----------------------------------------------------------
+Select 모델
+클라에서는 간단하게 붙을수 있는 방법으로도 사용가능
+소켓 함수 호출이 성공할 시점을 미리 알 수 있다
+기존 소켓의 문제점은 수신 버퍼 데이터가 없는데 read 시도
+혹은 송신 버퍼가 꽉찼는데 write 시도하거나
+블로킹 소켓 : 조건이 만족되지 않아서 블로킹 되는 상황 예방
+논블로킹 소켓 : 조건이 만족되지 않아서 불필요하게 반복 체크 하는 상황 예방
+
+socket set
+1) 읽기, 쓰기, 예외(OOB) 관찰 대상 등록(체크하고 싶은 부분 여부)
+OOB(out of band) 는 send() 마지막 인자 MSG_OOB로 보내는 특별한 데이터
+받는쪽에서도 recv() 마지막 인자에 MSG_OOB로 설정해줘야 받을 수 있음
+2) select(readSet, writeSet, exceptSet); -> 관찰 시작
+3) 적어도 하나의 소켓이 준비되면 리턴 -> 낙오자는 알아서 제거(중요)
+4) 남은 소켓 체크해서 진행
+
+fd_set read;
+FD_ZERO : 비운다
+ex) FD_ZERO(set);
+FD_SET : 소켓 s를 넣는다
+ex) FD_SET(s, &set); // 관찰소켓에 s 들어감
+FD_CLR : 소켓 s 를 제거
+ex) FD_CLR(s, &set);
+FD_ISSET : 소켓 s가 set에 들어있으면 0아닌 값을 리턴
+
+select 함수
+// [옵션] 마지막 timeout 인자 설정 가능
+		timeval timeout;
+		timeout.tv_sec;
+		timeout.tv_usec;
+
+블로킹 모드면 모든 데이터를 다 보냄
+논블로킹 모드면 상대 수신버퍼에 따라 일부만 보낼 수도 있음
+
+관찰할 read write set을 만들고 매번 초기화하고 등록하는 과정을 반복(select 호출하고 반환될 때 낙오자가 알아서 제거되기 때문에 매번 초기화 및 등록)
+
+FD_SETSIZE -> 최대 등록 가능한 대상, 셋을 여러개 만들어서 반복해도 되긴 함
+
+select -> 동기함수(결과물 나올때까지 기다림)
+
+----------------------------------------------------------
+WSAEventSelect 모델 (최대 개수가 정해져 있음)
+기존의 select는 전체적으로 초기화하고 등록하는 작업이 필요함
+소켓과 관련된 네트워크 이벤트를 이벤트 객체를 통해서 감지
+이벤트 객체 관련 함수들
+생성 : WSACreateEvent(수동 리셋 manual-reset + non-signaled 상태로 시작)
+삭제 : WSACloseEvent
+신호 상태 감지 : WSAWaitForMultipleEvents
+구체적인 네트워크 이벤트 알아내기 : WSAEnumNetworkEvents
+소켓과 이벤트 객체를 연동
+WSAEventSelect(socket, event, networkEvents);
+
+관찰할 네트워크 이벤트
+FD_ACCEPT	: 접속 클라 있음 accept
+FD_READ : 데이터 수신 가능, recv/recvfrom
+FD_WRITE : 데이터 송신 가능, send/sendto
+FD_CONNECT : 통신을 위한 연결 절차 완료
+FD_CLOSE : 상대가 통신 종료
+FD_OOB
+
+주의사항
+WSAEventSelect 함수를 호출하면 해당 소켓은 자동으로 넌블로킹 모드로 전환됨
+accept()함수가 리턴하는 소켓은 listenSocket과 동일한 속성을 갖는다
+clientSocket은 FD_READ, FD_WRITE등을 다시 등록할 필요가 있음(accept 이후에 추가적으로 이벤트 다시 등록 해야 함)
+WSAEWOULDBLOCK 오류가 뜰 수 있으니 예외 처리 필요
+중요)
+이벤트 발생 시 적절한 소켓 함수 호출해야 함
+아니면 다음번에는 동일 네트워크 이벤트가 발생하지 않는다
+(FD_READ 이벤트가 왔는데 recv 하지 않으면 두번 다시 FD_READ 이벤트 통지를 하지않음)
+
+WSAEventSelect는 연결만 해주는것, 통지는 별도의 함수로 받아야 함
+WSAWaitForMultipleEvents
+1) count, event
+2) waitAll 모두 기다림 / 하나만 완료되어도 ok
+3) timeout
+4) 지금은 false
+return : 완료된 첫번째 인덱스
+
+WSAEnumNetworkEvents // WSACreateEvent는 manual-reset이지만 해당 함수에서 reset 해줌
+1) 대상 socket
+2) eventObject : socket과 연동된 이벤트 객체 핸들, 이벤트 객체를 non-signaled 상태로
+3) networkEvent : 네트워크 이벤트 / 오류 정보가 저장
+
+----------------------------------------------------------
+Overlapped 모델(이벤트)
+Blocking			: 호출하면 대기모드에 빠져서 해당 스레드는 잠든상태로 완료될때까지 대기
+Non-blocking	: 호출하자마자 반환, 일처리를 못하면 에러 반환하거나 함
+Synchronous		: 동시에 일어나는 함수 - 동시에 일어나야 함
+Asynchronous	: 동시에 일어나지 않는 함수 - 동시에 일어나지 않아도 됨(실행 시점 자체를 분리할 뿐 멀티스레드의 개념과는 다름)
+
+overlapped IO(비동기 + 논블로킹)
+Overlapped 함수를 건다(WSARecv, WSASend)
+Overlapped 함수가 성공했는지 확인 후 
+성공했으면 결과 얻어서 처리
+실패했으면 사유 확인 (PENDING 상태 일수 있음) -> event와 callback 방식 2가지가 있음
+
+비동기 입출력 지원하는 소켓 생성 + 통지받기 위한 이벤트 생성
+비동기 입출력 함수 호출, 생성한 이벤트 객체를 WSAOVERLAPPED 객체에 넣어서 보내줌
+비동기 작업이 바로 완료되지 않으면 WSA_IO_PENDING 오류 코드
+운영체제는 이벤트 객체를 signaled 상태로 만들어서 완료 상태 알려줌
+WSAWaitForMultipleEvents 함수 호출해서 이벤트 객체의 signal 상태 판별
+WSAGetOverlappedResult 호출해서 비동기 입출력 결과 확인 및 데이터 처리
+
+WSAGetOverlappedResult
+1) 비동기 소켓
+2) 넘겨준 overlapped 구조체
+3) 전송된 바이트 수
+4) 비동기 입출력 작업이 끝날때까지 대기할지? - false
+5) 비동기 입출력 작업 관련 부가 정보, 거의 사용 안함
+
+
+비동기이기 때문에 함수 호출해서 반환받았다고 해도 완료된것은 아닐수 있음 -> send 할때 요청한 데이터 건드리면 안됨
+WSASend
+1) 비동기 입출력 소켓
+2) WSABUF 배열의 시작주소 + 개수(WSABUF를 배열로 만들어서 보낼수도 있음) Scatter-Gather - 쪼개진 패킷을 합쳐서 send 보내줄 수 있음
+3) 보내고 받은 바이트 수
+4) 상세 옵션, 0
+5) WSAOVERLAPPED 구조체 주소값(여기서는 hEvent값에 event 넣어줌)
+// 6) 입출력 완료되면 OS가 호출할 콜백 함수
+WSARecv
+
+WSASend/WSARecv를 여러개 생성할때 넣어준 overlapped는 다 달라야 하고 
+예약 후 완료 통지전에 overlapped안의 데이터를 바꿔버리면 오염될 수 있음
+
+----------------------------------------------------------
+Overlapped 모델(Completion routine 콜백 기반)
+비동기 입출력 지원하는 소켓 생성
+비동기 입출력 함수 호출, 완료 루틴의 시작 주소 넘겨줌)
+비동기 작업이 바로 완료되지 않으면 WSA_IO_PENDING 오류 코드
+비동기 입출력 함수 호출한 스레드를 -> Alertable wait 상태로 만든다
+ex) WaitForSingleObjectEx, WaitForMultipleObjectsEx, SleepEx, WSAWaitForMultipleEvents
+비동기 IO 완료되면, 운영체제는 완료 루틴 호출
+완료 루틴 호출이 모두 끝나면 쓰레드는 Alertable wait 상태에서 빠져나옴
+WSAWaitForMultipleEvents 함수 호출해서 이벤트 객체의 signal 상태 판별
+WSAGetOverlappedResult 호출해서 비동기 입출력 결과 확인 및 데이터 처리
+
+Alertable wait apc
+스레드마다 독립적으로 apc 큐 가지고있음 apc 큐에 콜백함수들을 넣어뒀다가
+alertable wait 상태가 되고 + 입출력 완료되면 완료루틴 전부 실행,
+완료루틴 끝나면 alertable wait 탈출
+-> 콜백함수로 묶어서 한번에 처리할 수 있음
+
+void CompletionRoutine()
+1) 오류 발생시 0 아닌 값
+2) 전송 바이트 수
+3) 비동기 입출력 함수 호출 시 넘겨준 WSAOVERLAPPED 구조체의 주소값
+4) 0
+
+비동기 입출력 함수 완료되면 스레드마다 있는 APC큐에 콜백 쌓임
+Alertable Wait 상태로 들어가서 APC 큐 비우기
+단점) APC가 스레드마다 있음, Alertable Wait 자체도 부담
+이벤트 방식 소켓:이벤트 1:1 대응
+
+----------------------------------------------------------
+정리
+Select 모델
+장점 - 윈도우/리눅스 공통
+단점 - 성능 최하(소켓 set 매번 등록, set은 64개 제한)
+// WSAAsyncSelect 모델 = 소켓 이벤트를 윈도우 메시지 형태로 처리(윈도우 api, 윈도우 메시지와 같이 처리하기떄문에 성능...)
+WSAEventSelect 모델
+장점 - 비교적 뛰어난 성능
+단점 - 64개 제한
+Overlapped(이벤트 기반)
+장점 - 성능
+단점 - 64개 제한
+Overlapped(콜백 기반)
+장점 - 성능
+단점 - 모든 비동기 소켓 함수에서 사용가능하진 않음(accept는 불가능 - 비동기 방식은 AcceptEx인데 콜백함수 받아주는부분이 없음), 빈번한 Alertable wait로 인한 성능 저하,
+			APC 사용하기 때문에 해당 스레드에서만 완료 루틴 가능
+IOCP
+
+Reactor Pattern (뒤늦게) - 논블로킹 소켓(소켓상태 확인 후 -> send recv 뒤늦게 호출)
+Proactor Pattern (미리) - overlapped WSA~를 미리 걸어둠)
+
+----------------------------------------------------------
+IOCP (Completion Port)
+APC 대신 Completion Port(스레드마다 있는건 아니고 보통 1개, 중앙에서 관리하는 APC큐 같은 느낌)
+Alertable Wait -> CP 결과 처리를 GetQueuedCompletionStatus
+쓰레드랑 궁합이 굉장히 좋음
+
+CreateIoCompletionPort
+GetQueuedCompletionStatus
+
+CP 생성, CP 등록, Recv 후, 일처리 완료 후 다시 등록
+
+CreateIoCompletionPort 키값으로 session, overlapped 주소는 WSARecv로 넘겨줌
+만약 session을 연결했는데 session이 제거 (접속 종료 등) -> 넘겨줬던 session 이 메모리에서 없어지면 문제생김 -> 날리지 못하게 막아줘야 함
+예약 걸어둔 상태로 삭제 못하게 막아야 함
+
+----------------------------------------------------------
+Socket Utils
+AcceptEvent 를 만들어서 계속 재사용
+acceptEvent->owner = this를 해야 하는데
+shared_ptr에서 자기 자신을 넣으려고 할 때 shared_ptr<IocpObject>(this) 하게되면 해당 포인터를 2개의 shared_ptr이 관리하게됨
+enable_shared_from_this 키워드로 상속(weak_ptr 생성)받고 shared_from_this() 사용
+
+Session#1
+if (errorCode != WSA_IO_PENDING) {
+	_recvEvent.owner = nullptr 해주지 않으면 iocp가 성공 통지하지 않기때문에 ref 카운트 문제로 메모리 릭 일어남
+}
+
+Session#2
+Send
+버퍼 관리
+sendEvent 관리? 단일? 여러개? WSASend 중첩?
+
+WSASend는 Thread safe 하지 않음
+여러개를 걸어도 되긴 함
+WSASend가 끝나고 processSend로 넘어오게되면 IocpCore에서 Dispatch 되는것이기 때문에 순서 보장할 수 없음
+애초에 Send 에서 PENDING이 떴다는 것은 커널쪽 용량이 부족해서 보낼 수 없다는것인데 불필요하게 데이터를 밀어넣는것이 필요한가?
+WSASend-> 버퍼를 여러개 모아서 보내는 것이 낫다
+항상 RefCount 체크 하기
+
+Session#3
+소켓을 생성하는것도 부담이 큼 -> 소켓 재사용하는것이 좋음
+
+----------------------------------------------------------
+SendBuffer
+Broadcast시 복사 비용 없도록 구현
+
+----------------------------------------------------------
+SendBufferPooling
+Chunk를 크게 할당받아서 조금씩 잘라서 사용
+
+꺼내쓰고 반납하고(MakeShared 말고 xnew 사용)
+GSendBufferManager->Push(SendBufferChunkRef(buffer, PushGlobal));
+Chunk 만들고 다 사용하면 새로운 Chunk 만들고 예전 chunk는 RefCount 체크해서 참조 없으면 다시 PushGlobal
+
+----------------------------------------------------------
+PacketSession
+모든 데이터가 전체적으로 다 보내졌는지 받았는지 알아야함
+해커들이 사이즈와 id를 바꿔서 보내는 시도를 함
+서버쪽에서 인지해서 잘못된 부분이 있다면 상대방을 kick 하는 로직도 필요
+
+----------------------------------------------------------
+Buffer Helpers
+
+----------------------------------------------------------
+PacketHandler
+클라는 신뢰할 수 없음
+가변데이터 크기 등 파싱하다 문제가 생기면 걸러낼 수 있어야 함
+문자열 인코딩 이슈
+
+----------------------------------------------------------
+Unicode
+문자
+문자 집합(문자와 숫자가 매칭되는 등의 규약을 만듦)
+
+인코딩 -> 같은 데이터를 다른 방식으로 표현
+
+어떤 언어 우세인지에 따라 각각 장단점이 있음
+UTF-8 : Unicode 문자집합 + 인코딩 방식(ex. 영문은 1바이트, 한글은 3바이트)
+UTF-16 : Unicode 문자집합 + 인코딩 방식(BMP 까지는 2byte, 그다음은 4byte, 한글 영문 모두 2byte)
+
+CP949 (Code Page 949) MS에서 도입한 코드페이지
+KS-X-1003 문자집합 (로마 1바이트)
+KS-X-1001 문자집합 (한글 2바이트)를 합쳐서 사용
+
+MBCS(Multi Byte Character Set) vs WBCS(Wide Byte Character Set)
+MBCS - char - 개별 문자를 다수의 바이트로 표현한 문자 셋
+WBCS - wchar - 유니코드 기반의 문자 셋(Windows 기준 = UTF16)
+
+TCHAR -> 문자집합을 고를 수 있음
+
+char sendData[1000] = "가"; // CP949 (한글 2바이트 + 로마 1바이트)
+char sendData2[1000] = u8"가"; // UTF8 = Unicode(한글 3바이트 + 로마 1바이트)
+WCHAR sendData3[1000] = L"가"; // UTF16 = Unicode(한글/로마 2바이트)
+TCHAR sendData4[1000] = _T("가");
+
+----------------------------------------------------------
+패킷 직렬화(Serialization) 1
+class Player {
+public:
+ int32 hp = 0;
+ int32 attack = 0;
+ Player* target = nullptr;
+ vector<int32> buffs;
+}
+
+Player* player = new Player();
+
+스택의 데이터는 파일 입출력 등 저장 및 불러오기 할수있지만
+힙에 올라간(동적할당된) 데이터들은 주소가 저장되기 때문에 다음 실행때는 쓸모없음
+
+idea 1. 고정 정보를 먼저 기입하고, 가변데이터들의 헤더(offset, count)를 넣어준 뒤 [고정데이터, 가변데이터] 순서로 보내고 받음
+
+----------------------------------------------------------
+패킷 직렬화(Serialization) 2
+불필요한 복사를 없앰(BYTE에서 버터의 내용을 포인터로 접근 - flatbuffer)
+
+----------------------------------------------------------
+패킷 직렬화3
+가변 데이터 사용전에 영역을 잡아주고 사용해야 함 -> 관리가 어려움
+
+----------------------------------------------------------
+채팅 실습
+LOCK에 들어온 작업이 시간 오래걸리는 작업이면 문제가 많음
+단순하게 락을 걸면 크래시는 나지 않지만 성능문제가 있을수 있음
+
+----------------------------------------------------------
+JobQueue
+커맨드 패턴
+요청을 캡슐화해서 건네준다. -> Lock을 잡고 경합하는것이 아니고 job을 만들어서 건네준다.
+락이 없는것은 아님 -> thread safe 한 queue에 넣어서 해결
+반드시 일감만들어서 해야 함. execute 자체는 한 스레드만 담당해서 관리해야함
+
+functor, 커맨드 패턴의 기본
+Lambda도 결국 functor와 비슷, func와 인자들로 구성되어있음
+일반적인 함수포인터의 경우 매개변수를 저장할 공간이 없음
+하지만 람다 같은경우 functor처럼 매개변수를 저장 가능
+
+람다 캡쳐모드
+[=] => 모든것을 복사
+[&] => 모든것을 참조값으로
+[player] => player를 복사
+[&player] => player를 참조로
+
+만들자마자 호출하면 문제가 없음
+하지만 JobQueue로 만들어서 다른 시간에 실행됨 => 참조로 들고있게되면 ref count를 올리지 않음 => 유효하지않은 주소를 참조하게 됨
+네트워크 시 send/recv 만들때 세션이 살아있어야 되듯이, 람다 내부도 유지해줘야 함
+
+class Knight {
+public:
+	void HealMe(int32 value) {
+		_hp += value;
+		cout << "HealMe!" << endl;
+	}
+	void Test() {
+		auto job = [this]() {
+			HealMe(_hp);
+		};
+	}
+
+private:
+	int32 _hp = 100;
+};
+auto job = [=]() 인 경우 [=]가 [this]를 가리키기 때문에 knight 생명주기를 알수없어서 댕글링 포인터 문제 가능
+
+하지만
+class Knight : public enable_shared_from_this<Knight> 를 상속받고
+auto job = [self = shared_from_this()]() {
+	self->HealMe(self->_hp);
+}
+로 바꿔주면 ref count를 체크하기때문에 해당 문제를 해결할 수 있음
+
+lambda + shared_ptr => memory leak 이라는 것이 있음
+자기 자신을 shared_ptr로 잡고있게 만들어서 메모리 해제가 안되도록 잘못짜여진 코드
+람다식 만들때 참조로 넘겨서 문제 생기지 않도록 해야함
+
+일감이 한쪽에 몰리게되거나, DoAsync 타고 가서 절대 끊나지 않는 상황이 생기면(일감이 한 쓰레드에 몰린 경우) 문제가 생김
+
+많은 스레드 관리 -> 네트워크전용 쓰레드와 인게임 전용 쓰레드 나눈다거나
+두루두루 사용하도록 한다거나 하는 등 관리 필요
+
+----------------------------------------------------------
+쿨타임 등 해당 시간이 지났을 때 실행되도록 하는 루틴이 필요함
+중앙 시스템을 만들어서 관리하도록
