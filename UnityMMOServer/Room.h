@@ -11,6 +11,9 @@ public:
 	void BroadcastOtherPlayers(SendBufferRef sendBuffer, uint64 uid);
 	bool GetAllPlayerData(OUT Vector<Protocol::PlayerData> &players);
 
+	void HandleSpawn(PlayerRef player);
+	void HandleMove(PlayerRef player, Protocol::CS_MOVE_REQ pkt);
+
 private:
 	map<uint64, PlayerRef> _players;
 	uint64 roomId;

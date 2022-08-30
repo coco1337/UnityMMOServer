@@ -31,7 +31,7 @@ namespace Protocol {
             "bC5QYWNrZXRFcnJvclR5cGUiPAoMQ1NfTE9HSU5fUkVREgoKAmlkGAEgASgE",
             "Eg4KBnVzZXJJZBgCIAEoCRIQCghwYXNzd29yZBgDIAEoCSJlCgxTQ19MT0dJ",
             "Tl9SRVMSCgoCaWQYASABKAQSLwoMcGFja2V0UmVzdWx0GAIgASgOMhkuUHJv",
-            "dG9jb2wuUGFja2V0RXJyb3JUeXBlEhAKA3VpZBgDIAEoBUgAiAEBQgYKBF91",
+            "dG9jb2wuUGFja2V0RXJyb3JUeXBlEhAKA3VpZBgDIAEoBEgAiAEBQgYKBF91",
             "aWQiKwoQQ1NfU0VORF9DSEFUX1JFURIKCgJpZBgBIAEoBBILCgNtc2cYAiAB",
             "KAkiiQEKDFNDX0NIQVRfTk9USRIKCgJpZBgBIAEoBBIvCgxwYWNrZXRSZXN1",
             "bHQYAiABKA4yGS5Qcm90b2NvbC5QYWNrZXRFcnJvclR5cGUSFQoIc2VuZGVy",
@@ -42,9 +42,11 @@ namespace Protocol {
             "b3RvY29sLlBsYXllckRhdGESEQoEbXlJZBgEIAEoBEgAiAEBQgcKBV9teUlk",
             "IkEKDVNDX1NQQVdOX05PVEkSCgoCaWQYASABKAQSJAoGcGxheWVyGAIgASgL",
             "MhQuUHJvdG9jb2wuUGxheWVyRGF0YSIqCg9TQ19ERVNQQVdOX05PVEkSCgoC",
-            "aWQYASABKAQSCwoDdWlkGAIgASgEIlEKEFNDX01PVkVEQVRBX05PVEkSCgoC",
-            "aWQYASABKAQSCwoDdWlkGAIgASgEEiQKCG1vdmVEYXRhGAMgASgLMhIuUHJv",
-            "dG9jb2wuTW92ZURhdGFiBnByb3RvMw=="));
+            "aWQYASABKAQSCwoDdWlkGAIgASgEIkwKC0NTX01PVkVfUkVREgoKAmlkGAEg",
+            "ASgEEgsKA3VpZBgCIAEoBBIkCghtb3ZlRGF0YRgDIAEoCzISLlByb3RvY29s",
+            "Lk1vdmVEYXRhIlEKEFNDX01PVkVEQVRBX05PVEkSCgoCaWQYASABKAQSCwoD",
+            "dWlkGAIgASgEEiQKCG1vdmVEYXRhGAMgASgLMhIuUHJvdG9jb2wuTW92ZURh",
+            "dGFiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Protocol.EnumReflection.Descriptor, global::Protocol.StructReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -58,6 +60,7 @@ namespace Protocol {
             new pbr::GeneratedClrTypeInfo(typeof(global::Protocol.SC_SPAWN_RES), global::Protocol.SC_SPAWN_RES.Parser, new[]{ "Id", "PacketResult", "Players", "MyId" }, new[]{ "MyId" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protocol.SC_SPAWN_NOTI), global::Protocol.SC_SPAWN_NOTI.Parser, new[]{ "Id", "Player" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protocol.SC_DESPAWN_NOTI), global::Protocol.SC_DESPAWN_NOTI.Parser, new[]{ "Id", "Uid" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Protocol.CS_MOVE_REQ), global::Protocol.CS_MOVE_REQ.Parser, new[]{ "Id", "Uid", "MoveData" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Protocol.SC_MOVEDATA_NOTI), global::Protocol.SC_MOVEDATA_NOTI.Parser, new[]{ "Id", "Uid", "MoveData" }, null, null, null, null)
           }));
     }
@@ -891,11 +894,11 @@ namespace Protocol {
 
     /// <summary>Field number for the "uid" field.</summary>
     public const int UidFieldNumber = 3;
-    private int uid_;
+    private ulong uid_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int Uid {
-      get { if ((_hasBits0 & 1) != 0) { return uid_; } else { return 0; } }
+    public ulong Uid {
+      get { if ((_hasBits0 & 1) != 0) { return uid_; } else { return 0UL; } }
       set {
         _hasBits0 |= 1;
         uid_ = value;
@@ -970,7 +973,7 @@ namespace Protocol {
       }
       if (HasUid) {
         output.WriteRawTag(24);
-        output.WriteInt32(Uid);
+        output.WriteUInt64(Uid);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -992,7 +995,7 @@ namespace Protocol {
       }
       if (HasUid) {
         output.WriteRawTag(24);
-        output.WriteInt32(Uid);
+        output.WriteUInt64(Uid);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -1011,7 +1014,7 @@ namespace Protocol {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) PacketResult);
       }
       if (HasUid) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Uid);
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Uid);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1058,7 +1061,7 @@ namespace Protocol {
             break;
           }
           case 24: {
-            Uid = input.ReadInt32();
+            Uid = input.ReadUInt64();
             break;
           }
         }
@@ -1085,7 +1088,7 @@ namespace Protocol {
             break;
           }
           case 24: {
-            Uid = input.ReadInt32();
+            Uid = input.ReadUInt64();
             break;
           }
         }
@@ -2599,6 +2602,278 @@ namespace Protocol {
 
   }
 
+  public sealed partial class CS_MOVE_REQ : pb::IMessage<CS_MOVE_REQ>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<CS_MOVE_REQ> _parser = new pb::MessageParser<CS_MOVE_REQ>(() => new CS_MOVE_REQ());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<CS_MOVE_REQ> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Protocol.ProtocolReflection.Descriptor.MessageTypes[10]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public CS_MOVE_REQ() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public CS_MOVE_REQ(CS_MOVE_REQ other) : this() {
+      id_ = other.id_;
+      uid_ = other.uid_;
+      moveData_ = other.moveData_ != null ? other.moveData_.Clone() : null;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public CS_MOVE_REQ Clone() {
+      return new CS_MOVE_REQ(this);
+    }
+
+    /// <summary>Field number for the "id" field.</summary>
+    public const int IdFieldNumber = 1;
+    private ulong id_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public ulong Id {
+      get { return id_; }
+      set {
+        id_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "uid" field.</summary>
+    public const int UidFieldNumber = 2;
+    private ulong uid_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public ulong Uid {
+      get { return uid_; }
+      set {
+        uid_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "moveData" field.</summary>
+    public const int MoveDataFieldNumber = 3;
+    private global::Protocol.MoveData moveData_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Protocol.MoveData MoveData {
+      get { return moveData_; }
+      set {
+        moveData_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as CS_MOVE_REQ);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(CS_MOVE_REQ other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Id != other.Id) return false;
+      if (Uid != other.Uid) return false;
+      if (!object.Equals(MoveData, other.MoveData)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Id != 0UL) hash ^= Id.GetHashCode();
+      if (Uid != 0UL) hash ^= Uid.GetHashCode();
+      if (moveData_ != null) hash ^= MoveData.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Id != 0UL) {
+        output.WriteRawTag(8);
+        output.WriteUInt64(Id);
+      }
+      if (Uid != 0UL) {
+        output.WriteRawTag(16);
+        output.WriteUInt64(Uid);
+      }
+      if (moveData_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(MoveData);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Id != 0UL) {
+        output.WriteRawTag(8);
+        output.WriteUInt64(Id);
+      }
+      if (Uid != 0UL) {
+        output.WriteRawTag(16);
+        output.WriteUInt64(Uid);
+      }
+      if (moveData_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(MoveData);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (Id != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Id);
+      }
+      if (Uid != 0UL) {
+        size += 1 + pb::CodedOutputStream.ComputeUInt64Size(Uid);
+      }
+      if (moveData_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(MoveData);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(CS_MOVE_REQ other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Id != 0UL) {
+        Id = other.Id;
+      }
+      if (other.Uid != 0UL) {
+        Uid = other.Uid;
+      }
+      if (other.moveData_ != null) {
+        if (moveData_ == null) {
+          MoveData = new global::Protocol.MoveData();
+        }
+        MoveData.MergeFrom(other.MoveData);
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            Id = input.ReadUInt64();
+            break;
+          }
+          case 16: {
+            Uid = input.ReadUInt64();
+            break;
+          }
+          case 26: {
+            if (moveData_ == null) {
+              MoveData = new global::Protocol.MoveData();
+            }
+            input.ReadMessage(MoveData);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 8: {
+            Id = input.ReadUInt64();
+            break;
+          }
+          case 16: {
+            Uid = input.ReadUInt64();
+            break;
+          }
+          case 26: {
+            if (moveData_ == null) {
+              MoveData = new global::Protocol.MoveData();
+            }
+            input.ReadMessage(MoveData);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
   public sealed partial class SC_MOVEDATA_NOTI : pb::IMessage<SC_MOVEDATA_NOTI>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
@@ -2613,7 +2888,7 @@ namespace Protocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Protocol.ProtocolReflection.Descriptor.MessageTypes[10]; }
+      get { return global::Protocol.ProtocolReflection.Descriptor.MessageTypes[11]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]

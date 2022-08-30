@@ -50,6 +50,9 @@ namespace Protocol {
 class CS_LOGIN_REQ;
 struct CS_LOGIN_REQDefaultTypeInternal;
 extern CS_LOGIN_REQDefaultTypeInternal _CS_LOGIN_REQ_default_instance_;
+class CS_MOVE_REQ;
+struct CS_MOVE_REQDefaultTypeInternal;
+extern CS_MOVE_REQDefaultTypeInternal _CS_MOVE_REQ_default_instance_;
 class CS_REGISTER_REQ;
 struct CS_REGISTER_REQDefaultTypeInternal;
 extern CS_REGISTER_REQDefaultTypeInternal _CS_REGISTER_REQ_default_instance_;
@@ -83,6 +86,7 @@ extern SC_SPAWN_RESDefaultTypeInternal _SC_SPAWN_RES_default_instance_;
 }  // namespace Protocol
 PROTOBUF_NAMESPACE_OPEN
 template<> ::Protocol::CS_LOGIN_REQ* Arena::CreateMaybeMessage<::Protocol::CS_LOGIN_REQ>(Arena*);
+template<> ::Protocol::CS_MOVE_REQ* Arena::CreateMaybeMessage<::Protocol::CS_MOVE_REQ>(Arena*);
 template<> ::Protocol::CS_REGISTER_REQ* Arena::CreateMaybeMessage<::Protocol::CS_REGISTER_REQ>(Arena*);
 template<> ::Protocol::CS_SEND_CHAT_REQ* Arena::CreateMaybeMessage<::Protocol::CS_SEND_CHAT_REQ>(Arena*);
 template<> ::Protocol::CS_SPAWN_REQ* Arena::CreateMaybeMessage<::Protocol::CS_SPAWN_REQ>(Arena*);
@@ -739,8 +743,8 @@ class SC_LOGIN_RES final :
 
   enum : int {
     kIdFieldNumber = 1,
-    kPacketResultFieldNumber = 2,
     kUidFieldNumber = 3,
+    kPacketResultFieldNumber = 2,
   };
   // uint64 id = 1;
   void clear_id();
@@ -751,6 +755,19 @@ class SC_LOGIN_RES final :
   void _internal_set_id(uint64_t value);
   public:
 
+  // optional uint64 uid = 3;
+  bool has_uid() const;
+  private:
+  bool _internal_has_uid() const;
+  public:
+  void clear_uid();
+  uint64_t uid() const;
+  void set_uid(uint64_t value);
+  private:
+  uint64_t _internal_uid() const;
+  void _internal_set_uid(uint64_t value);
+  public:
+
   // .Protocol.PacketErrorType packetResult = 2;
   void clear_packetresult();
   ::Protocol::PacketErrorType packetresult() const;
@@ -758,19 +775,6 @@ class SC_LOGIN_RES final :
   private:
   ::Protocol::PacketErrorType _internal_packetresult() const;
   void _internal_set_packetresult(::Protocol::PacketErrorType value);
-  public:
-
-  // optional int32 uid = 3;
-  bool has_uid() const;
-  private:
-  bool _internal_has_uid() const;
-  public:
-  void clear_uid();
-  int32_t uid() const;
-  void set_uid(int32_t value);
-  private:
-  int32_t _internal_uid() const;
-  void _internal_set_uid(int32_t value);
   public:
 
   // @@protoc_insertion_point(class_scope:Protocol.SC_LOGIN_RES)
@@ -784,8 +788,8 @@ class SC_LOGIN_RES final :
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     uint64_t id_;
+    uint64_t uid_;
     int packetresult_;
-    int32_t uid_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_Protocol_2eproto;
@@ -1826,6 +1830,185 @@ class SC_DESPAWN_NOTI final :
 };
 // -------------------------------------------------------------------
 
+class CS_MOVE_REQ final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.CS_MOVE_REQ) */ {
+ public:
+  inline CS_MOVE_REQ() : CS_MOVE_REQ(nullptr) {}
+  ~CS_MOVE_REQ() override;
+  explicit PROTOBUF_CONSTEXPR CS_MOVE_REQ(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  CS_MOVE_REQ(const CS_MOVE_REQ& from);
+  CS_MOVE_REQ(CS_MOVE_REQ&& from) noexcept
+    : CS_MOVE_REQ() {
+    *this = ::std::move(from);
+  }
+
+  inline CS_MOVE_REQ& operator=(const CS_MOVE_REQ& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline CS_MOVE_REQ& operator=(CS_MOVE_REQ&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const CS_MOVE_REQ& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const CS_MOVE_REQ* internal_default_instance() {
+    return reinterpret_cast<const CS_MOVE_REQ*>(
+               &_CS_MOVE_REQ_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    10;
+
+  friend void swap(CS_MOVE_REQ& a, CS_MOVE_REQ& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(CS_MOVE_REQ* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(CS_MOVE_REQ* other) {
+    if (other == this) return;
+    GOOGLE_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  CS_MOVE_REQ* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<CS_MOVE_REQ>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const CS_MOVE_REQ& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const CS_MOVE_REQ& from) {
+    CS_MOVE_REQ::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  uint8_t* _InternalSerialize(
+      uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(CS_MOVE_REQ* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
+    return "Protocol.CS_MOVE_REQ";
+  }
+  protected:
+  explicit CS_MOVE_REQ(::PROTOBUF_NAMESPACE_ID::Arena* arena,
+                       bool is_message_owned = false);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kMoveDataFieldNumber = 3,
+    kIdFieldNumber = 1,
+    kUidFieldNumber = 2,
+  };
+  // .Protocol.MoveData moveData = 3;
+  bool has_movedata() const;
+  private:
+  bool _internal_has_movedata() const;
+  public:
+  void clear_movedata();
+  const ::Protocol::MoveData& movedata() const;
+  PROTOBUF_NODISCARD ::Protocol::MoveData* release_movedata();
+  ::Protocol::MoveData* mutable_movedata();
+  void set_allocated_movedata(::Protocol::MoveData* movedata);
+  private:
+  const ::Protocol::MoveData& _internal_movedata() const;
+  ::Protocol::MoveData* _internal_mutable_movedata();
+  public:
+  void unsafe_arena_set_allocated_movedata(
+      ::Protocol::MoveData* movedata);
+  ::Protocol::MoveData* unsafe_arena_release_movedata();
+
+  // uint64 id = 1;
+  void clear_id();
+  uint64_t id() const;
+  void set_id(uint64_t value);
+  private:
+  uint64_t _internal_id() const;
+  void _internal_set_id(uint64_t value);
+  public:
+
+  // uint64 uid = 2;
+  void clear_uid();
+  uint64_t uid() const;
+  void set_uid(uint64_t value);
+  private:
+  uint64_t _internal_uid() const;
+  void _internal_set_uid(uint64_t value);
+  public:
+
+  // @@protoc_insertion_point(class_scope:Protocol.CS_MOVE_REQ)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::Protocol::MoveData* movedata_;
+    uint64_t id_;
+    uint64_t uid_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_Protocol_2eproto;
+};
+// -------------------------------------------------------------------
+
 class SC_MOVEDATA_NOTI final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:Protocol.SC_MOVEDATA_NOTI) */ {
  public:
@@ -1874,7 +2057,7 @@ class SC_MOVEDATA_NOTI final :
                &_SC_MOVEDATA_NOTI_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    11;
 
   friend void swap(SC_MOVEDATA_NOTI& a, SC_MOVEDATA_NOTI& b) {
     a.Swap(&b);
@@ -2346,7 +2529,7 @@ inline void SC_LOGIN_RES::set_packetresult(::Protocol::PacketErrorType value) {
   // @@protoc_insertion_point(field_set:Protocol.SC_LOGIN_RES.packetResult)
 }
 
-// optional int32 uid = 3;
+// optional uint64 uid = 3;
 inline bool SC_LOGIN_RES::_internal_has_uid() const {
   bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   return value;
@@ -2355,21 +2538,21 @@ inline bool SC_LOGIN_RES::has_uid() const {
   return _internal_has_uid();
 }
 inline void SC_LOGIN_RES::clear_uid() {
-  _impl_.uid_ = 0;
+  _impl_.uid_ = uint64_t{0u};
   _impl_._has_bits_[0] &= ~0x00000001u;
 }
-inline int32_t SC_LOGIN_RES::_internal_uid() const {
+inline uint64_t SC_LOGIN_RES::_internal_uid() const {
   return _impl_.uid_;
 }
-inline int32_t SC_LOGIN_RES::uid() const {
+inline uint64_t SC_LOGIN_RES::uid() const {
   // @@protoc_insertion_point(field_get:Protocol.SC_LOGIN_RES.uid)
   return _internal_uid();
 }
-inline void SC_LOGIN_RES::_internal_set_uid(int32_t value) {
+inline void SC_LOGIN_RES::_internal_set_uid(uint64_t value) {
   _impl_._has_bits_[0] |= 0x00000001u;
   _impl_.uid_ = value;
 }
-inline void SC_LOGIN_RES::set_uid(int32_t value) {
+inline void SC_LOGIN_RES::set_uid(uint64_t value) {
   _internal_set_uid(value);
   // @@protoc_insertion_point(field_set:Protocol.SC_LOGIN_RES.uid)
 }
@@ -2916,6 +3099,135 @@ inline void SC_DESPAWN_NOTI::set_uid(uint64_t value) {
 
 // -------------------------------------------------------------------
 
+// CS_MOVE_REQ
+
+// uint64 id = 1;
+inline void CS_MOVE_REQ::clear_id() {
+  _impl_.id_ = uint64_t{0u};
+}
+inline uint64_t CS_MOVE_REQ::_internal_id() const {
+  return _impl_.id_;
+}
+inline uint64_t CS_MOVE_REQ::id() const {
+  // @@protoc_insertion_point(field_get:Protocol.CS_MOVE_REQ.id)
+  return _internal_id();
+}
+inline void CS_MOVE_REQ::_internal_set_id(uint64_t value) {
+  
+  _impl_.id_ = value;
+}
+inline void CS_MOVE_REQ::set_id(uint64_t value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:Protocol.CS_MOVE_REQ.id)
+}
+
+// uint64 uid = 2;
+inline void CS_MOVE_REQ::clear_uid() {
+  _impl_.uid_ = uint64_t{0u};
+}
+inline uint64_t CS_MOVE_REQ::_internal_uid() const {
+  return _impl_.uid_;
+}
+inline uint64_t CS_MOVE_REQ::uid() const {
+  // @@protoc_insertion_point(field_get:Protocol.CS_MOVE_REQ.uid)
+  return _internal_uid();
+}
+inline void CS_MOVE_REQ::_internal_set_uid(uint64_t value) {
+  
+  _impl_.uid_ = value;
+}
+inline void CS_MOVE_REQ::set_uid(uint64_t value) {
+  _internal_set_uid(value);
+  // @@protoc_insertion_point(field_set:Protocol.CS_MOVE_REQ.uid)
+}
+
+// .Protocol.MoveData moveData = 3;
+inline bool CS_MOVE_REQ::_internal_has_movedata() const {
+  return this != internal_default_instance() && _impl_.movedata_ != nullptr;
+}
+inline bool CS_MOVE_REQ::has_movedata() const {
+  return _internal_has_movedata();
+}
+inline const ::Protocol::MoveData& CS_MOVE_REQ::_internal_movedata() const {
+  const ::Protocol::MoveData* p = _impl_.movedata_;
+  return p != nullptr ? *p : reinterpret_cast<const ::Protocol::MoveData&>(
+      ::Protocol::_MoveData_default_instance_);
+}
+inline const ::Protocol::MoveData& CS_MOVE_REQ::movedata() const {
+  // @@protoc_insertion_point(field_get:Protocol.CS_MOVE_REQ.moveData)
+  return _internal_movedata();
+}
+inline void CS_MOVE_REQ::unsafe_arena_set_allocated_movedata(
+    ::Protocol::MoveData* movedata) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.movedata_);
+  }
+  _impl_.movedata_ = movedata;
+  if (movedata) {
+    
+  } else {
+    
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:Protocol.CS_MOVE_REQ.moveData)
+}
+inline ::Protocol::MoveData* CS_MOVE_REQ::release_movedata() {
+  
+  ::Protocol::MoveData* temp = _impl_.movedata_;
+  _impl_.movedata_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::Protocol::MoveData* CS_MOVE_REQ::unsafe_arena_release_movedata() {
+  // @@protoc_insertion_point(field_release:Protocol.CS_MOVE_REQ.moveData)
+  
+  ::Protocol::MoveData* temp = _impl_.movedata_;
+  _impl_.movedata_ = nullptr;
+  return temp;
+}
+inline ::Protocol::MoveData* CS_MOVE_REQ::_internal_mutable_movedata() {
+  
+  if (_impl_.movedata_ == nullptr) {
+    auto* p = CreateMaybeMessage<::Protocol::MoveData>(GetArenaForAllocation());
+    _impl_.movedata_ = p;
+  }
+  return _impl_.movedata_;
+}
+inline ::Protocol::MoveData* CS_MOVE_REQ::mutable_movedata() {
+  ::Protocol::MoveData* _msg = _internal_mutable_movedata();
+  // @@protoc_insertion_point(field_mutable:Protocol.CS_MOVE_REQ.moveData)
+  return _msg;
+}
+inline void CS_MOVE_REQ::set_allocated_movedata(::Protocol::MoveData* movedata) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.movedata_);
+  }
+  if (movedata) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
+                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(movedata));
+    if (message_arena != submessage_arena) {
+      movedata = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, movedata, submessage_arena);
+    }
+    
+  } else {
+    
+  }
+  _impl_.movedata_ = movedata;
+  // @@protoc_insertion_point(field_set_allocated:Protocol.CS_MOVE_REQ.moveData)
+}
+
+// -------------------------------------------------------------------
+
 // SC_MOVEDATA_NOTI
 
 // uint64 id = 1;
@@ -3046,6 +3358,8 @@ inline void SC_MOVEDATA_NOTI::set_allocated_movedata(::Protocol::MoveData* moved
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

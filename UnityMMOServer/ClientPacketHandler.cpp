@@ -129,20 +129,14 @@ bool Handle_CS_SEND_CHAT_REQ(PacketSessionRef& session, Protocol::CS_SEND_CHAT_R
 
 bool Handle_CS_SPAWN_REQ(PacketSessionRef& session, Protocol::CS_SPAWN_REQ& pkt)
 {
-	Protocol::SC_SPAWN_RES res;
-	res.set_id(PKT_SC_SPAWN_RES);
-
 	auto gameSession = static_pointer_cast<GameSession>(session);
+	GRoom->DoAsync(&Room::HandleSpawn, gameSession->_currentPlayer);
+	return true;
+}
 
-	Vector<Protocol::PlayerData> players;
-	GRoom->GetAllPlayerData(players);
-
-	res.set_packetresult(PacketErrorType::PACKET_ERROR_TYPE_SUCCESS);
-	res.set_myid(gameSession->_currentPlayer->playerId);
-
-	for (auto p : players) *res.mutable_players()->Add() = p;
-
-	session->Send(ClientPacketHandler::MakeSendBuffer(res));
-
+bool Handle_CS_MOVE_REQ(PacketSessionRef& session, Protocol::CS_MOVE_REQ& pkt)
+{
+	auto gameSession = static_pointer_cast<GameSession>(session);
+	GRoom->DoAsync(&Room::HandleMove, gameSession->_currentPlayer, pkt);
 	return true;
 }

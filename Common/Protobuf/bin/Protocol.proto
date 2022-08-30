@@ -28,7 +28,7 @@ message SC_LOGIN_RES
 {
 	uint64 id = 1;
 	PacketErrorType packetResult = 2;
-	optional int32 uid = 3;
+	optional uint64 uid = 3;
 }
 
 message CS_SEND_CHAT_REQ
@@ -68,6 +68,13 @@ message SC_DESPAWN_NOTI
 {
 	uint64 id = 1;
 	uint64 uid = 2;
+}
+
+message CS_MOVE_REQ
+{
+	uint64 id = 1;
+	uint64 uid = 2;
+	MoveData moveData = 3;
 }
 
 message SC_MOVEDATA_NOTI

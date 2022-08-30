@@ -19,7 +19,8 @@ enum : uint16 {
   PKT_SC_SPAWN_RES = 1007,
   PKT_SC_SPAWN_NOTI = 1008,
   PKT_SC_DESPAWN_NOTI = 1009,
-  PKT_SC_MOVEDATA_NOTI = 1010,
+  PKT_CS_MOVE_REQ = 1010,
+  PKT_SC_MOVEDATA_NOTI = 1011,
 };
 
 // Custom Handlers
@@ -28,6 +29,7 @@ bool Handle_CS_REGISTER_REQ(PacketSessionRef& session, Protocol::CS_REGISTER_REQ
 bool Handle_CS_LOGIN_REQ(PacketSessionRef& session, Protocol::CS_LOGIN_REQ& pkt);
 bool Handle_CS_SEND_CHAT_REQ(PacketSessionRef& session, Protocol::CS_SEND_CHAT_REQ& pkt);
 bool Handle_CS_SPAWN_REQ(PacketSessionRef& session, Protocol::CS_SPAWN_REQ& pkt);
+bool Handle_CS_MOVE_REQ(PacketSessionRef& session, Protocol::CS_MOVE_REQ& pkt);
 
 class ClientPacketHandler
 {
@@ -39,6 +41,7 @@ public:
     GPacketHandler[PKT_CS_LOGIN_REQ] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::CS_LOGIN_REQ>(Handle_CS_LOGIN_REQ, session, buffer, len); };
     GPacketHandler[PKT_CS_SEND_CHAT_REQ] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::CS_SEND_CHAT_REQ>(Handle_CS_SEND_CHAT_REQ, session, buffer, len); };
     GPacketHandler[PKT_CS_SPAWN_REQ] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::CS_SPAWN_REQ>(Handle_CS_SPAWN_REQ, session, buffer, len); };
+    GPacketHandler[PKT_CS_MOVE_REQ] = [](PacketSessionRef& session, BYTE* buffer, int32 len) { return HandlePacket<Protocol::CS_MOVE_REQ>(Handle_CS_MOVE_REQ, session, buffer, len); };
   }
 
 	static bool HandlePacket(PacketSessionRef& session, BYTE* buffer, int32 len) {

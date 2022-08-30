@@ -13,7 +13,7 @@ void Room::Enter(PlayerRef player)
 
 	// broadcast other player
 	Protocol::SC_SPAWN_NOTI noti;
-	noti.set_id(player->playerId);
+	noti.set_id(PKT_SC_SPAWN_NOTI);
 
 	BroadcastOtherPlayers(ClientPacketHandler::MakeSendBuffer(noti), player->playerId);
 }
@@ -54,45 +54,52 @@ bool Room::GetAllPlayerData(OUT Vector<Protocol::PlayerData>& players)
 
 		player.set_uid(_player.first);
 		player.set_username(_player.second->name);
-
-		{
-			auto moveData = MakeShared<Protocol::MoveData>();
-
-			{
-				auto pos = MakeShared<Protocol::Vec3>();
-				tuple<float, float, float> playerPos;
-				playerPos = _player.second->GetPos();
-				pos->set_x(get<0>(playerPos));
-				pos->set_y(get<1>(playerPos));
-				pos->set_z(get<2>(playerPos));
-				moveData->mutable_position()->CopyFrom(*pos);
-			}
-
-			{
-				auto rot = MakeShared<Protocol::Vec3>();
-				tuple<float, float, float> playerRot;
-				playerRot = _player.second->GetRot();
-				rot->set_x(get<0>(playerRot));
-				rot->set_y(get<1>(playerRot));
-				rot->set_z(get<2>(playerRot));
-				moveData->mutable_rotation()->CopyFrom(*rot);
-			}
-
-			{
-				auto moveDir = MakeShared<Protocol::Vec3>();
-				tuple<float, float, float> playerMoveDir;
-				playerMoveDir = _player.second->GetMoveDir();
-				moveDir->set_x(get<0>(playerMoveDir));
-				moveDir->set_y(get<1>(playerMoveDir));
-				moveDir->set_z(get<2>(playerMoveDir));
-				moveData->mutable_movedir()->CopyFrom(*moveDir);
-			}
-
-			player.mutable_movedata()->CopyFrom(*moveData);
-		}		
+		player.mutable_movedata()->CopyFrom(_player.second->GetMoveData());
 
 		players.push_back(player);
 	}
 
 	return true;
+}
+
+void Room::HandleSpawn(PlayerRef player)
+{
+	Protocol::SC_SPAWN_RES res;
+	for (auto _player : _players)
+	{
+		Protocol::PlayerData p;
+
+		p.set_uid(_player.first);
+		p.set_username(_player.second->name);
+		p.mutable_movedata()->CopyFrom(_player.second->GetMoveData());
+
+		*res.mutable_players()->Add() = p;
+	}
+	
+	res.set_id(PKT_SC_SPAWN_RES);
+	res.set_packetresult(Protocol::PacketErrorType::PACKET_ERROR_TYPE_SUCCESS);
+	res.set_myid(player->playerId);
+
+	Broadcast(ClientPacketHandler::MakeSendBuffer(res));
+}
+
+void Room::HandleMove(PlayerRef player, Protocol::CS_MOVE_REQ pkt)
+{
+	Protocol::SC_MOVEDATA_NOTI noti;
+	noti.set_id(PKT_SC_MOVEDATA_NOTI);
+
+	if (player == nullptr) return;
+
+	auto& moveData = pkt.movedata();
+	auto playerMoveData = player->GetMoveData();
+
+	// TODO : 맵 정보 확인해서 이동할 수 있는지 체크, 못하면 노티 안보내기
+
+	player->UpdateMoveData(moveData);
+
+	// broadcast
+	noti.set_uid(player->playerId);
+	noti.mutable_movedata()->CopyFrom(moveData);
+
+	Broadcast(ClientPacketHandler::MakeSendBuffer(noti));
 }
