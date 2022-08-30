@@ -51,29 +51,45 @@ bool Room::GetAllPlayerData(OUT Vector<Protocol::PlayerData>& players)
 	for (auto _player : _players)
 	{
 		Protocol::PlayerData player;
-		tuple<float, float, float> playerPos;
-		tuple<float, float, float> playerRot;
 
 		player.set_uid(_player.first);
 		player.set_username(_player.second->name);
 
 		{
-			auto pos = MakeShared<Protocol::Position>();
-			playerPos = _player.second->GetPos();
-			pos->set_x(get<0>(playerPos));
-			pos->set_y(get<1>(playerPos));
-			pos->set_z(get<2>(playerPos));
-			player.mutable_position()->CopyFrom(*pos);
-		}
+			auto moveData = MakeShared<Protocol::MoveData>();
 
-		{
-			auto rot = MakeShared<Protocol::Rotation>();
-			playerRot = _player.second->GetRot();
-			rot->set_x(get<0>(playerRot));
-			rot->set_y(get<1>(playerRot));
-			rot->set_z(get<2>(playerRot));
-			player.mutable_rotation()->CopyFrom(*rot);
-		}
+			{
+				auto pos = MakeShared<Protocol::Vec3>();
+				tuple<float, float, float> playerPos;
+				playerPos = _player.second->GetPos();
+				pos->set_x(get<0>(playerPos));
+				pos->set_y(get<1>(playerPos));
+				pos->set_z(get<2>(playerPos));
+				moveData->mutable_position()->CopyFrom(*pos);
+			}
+
+			{
+				auto rot = MakeShared<Protocol::Vec3>();
+				tuple<float, float, float> playerRot;
+				playerRot = _player.second->GetRot();
+				rot->set_x(get<0>(playerRot));
+				rot->set_y(get<1>(playerRot));
+				rot->set_z(get<2>(playerRot));
+				moveData->mutable_rotation()->CopyFrom(*rot);
+			}
+
+			{
+				auto moveDir = MakeShared<Protocol::Vec3>();
+				tuple<float, float, float> playerMoveDir;
+				playerMoveDir = _player.second->GetMoveDir();
+				moveDir->set_x(get<0>(playerMoveDir));
+				moveDir->set_y(get<1>(playerMoveDir));
+				moveDir->set_z(get<2>(playerMoveDir));
+				moveData->mutable_movedir()->CopyFrom(*moveDir);
+			}
+
+			player.mutable_movedata()->CopyFrom(*moveData);
+		}		
 
 		players.push_back(player);
 	}

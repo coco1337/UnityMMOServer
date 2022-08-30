@@ -63,3 +63,6 @@
 *.pidb
 *.svclog
 *.scc
+Binary/Debug/
+
+UnityMMOServer/x64/Debug/

@@ -7,18 +7,17 @@ message PlayerData
 {
 	uint64 uid = 1;
 	string userName = 2;
-	Position position = 3;
-	Rotation rotation = 4;
+	MoveData moveData = 3;
 }
 
-message Position
+message MoveData 
 {
-	float x = 1;
-	float y = 2;
-	float z = 3;
+	Vec3 position = 3;
+	Vec3 rotation = 4;
+	Vec3 moveDir = 5;
 }
 
-message Rotation
+message Vec3 
 {
 	float x = 1;
 	float y = 2;

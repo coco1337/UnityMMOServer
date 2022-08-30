@@ -69,3 +69,10 @@ message SC_DESPAWN_NOTI
 	uint64 id = 1;
 	uint64 uid = 2;
 }
+
+message SC_MOVEDATA_NOTI
+{
+	uint64 id = 1;
+	uint64 uid = 2;
+	MoveData moveData = 3;
+}

@@ -24,18 +24,19 @@ namespace Protocol {
     static StructReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "CgxTdHJ1Y3QucHJvdG8SCFByb3RvY29sGgpFbnVtLnByb3RvIncKClBsYXll",
-            "ckRhdGESCwoDdWlkGAEgASgEEhAKCHVzZXJOYW1lGAIgASgJEiQKCHBvc2l0",
-            "aW9uGAMgASgLMhIuUHJvdG9jb2wuUG9zaXRpb24SJAoIcm90YXRpb24YBCAB",
-            "KAsyEi5Qcm90b2NvbC5Sb3RhdGlvbiIrCghQb3NpdGlvbhIJCgF4GAEgASgC",
-            "EgkKAXkYAiABKAISCQoBehgDIAEoAiIrCghSb3RhdGlvbhIJCgF4GAEgASgC",
-            "EgkKAXkYAiABKAISCQoBehgDIAEoAmIGcHJvdG8z"));
+            "CgxTdHJ1Y3QucHJvdG8SCFByb3RvY29sGgpFbnVtLnByb3RvIlEKClBsYXll",
+            "ckRhdGESCwoDdWlkGAEgASgEEhAKCHVzZXJOYW1lGAIgASgJEiQKCG1vdmVE",
+            "YXRhGAMgASgLMhIuUHJvdG9jb2wuTW92ZURhdGEibwoITW92ZURhdGESIAoI",
+            "cG9zaXRpb24YAyABKAsyDi5Qcm90b2NvbC5WZWMzEiAKCHJvdGF0aW9uGAQg",
+            "ASgLMg4uUHJvdG9jb2wuVmVjMxIfCgdtb3ZlRGlyGAUgASgLMg4uUHJvdG9j",
+            "b2wuVmVjMyInCgRWZWMzEgkKAXgYASABKAISCQoBeRgCIAEoAhIJCgF6GAMg",
+            "ASgCYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Protocol.EnumReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Protocol.PlayerData), global::Protocol.PlayerData.Parser, new[]{ "Uid", "UserName", "Position", "Rotation" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Protocol.Position), global::Protocol.Position.Parser, new[]{ "X", "Y", "Z" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Protocol.Rotation), global::Protocol.Rotation.Parser, new[]{ "X", "Y", "Z" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Protocol.PlayerData), global::Protocol.PlayerData.Parser, new[]{ "Uid", "UserName", "MoveData" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Protocol.MoveData), global::Protocol.MoveData.Parser, new[]{ "Position", "Rotation", "MoveDir" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Protocol.Vec3), global::Protocol.Vec3.Parser, new[]{ "X", "Y", "Z" }, null, null, null, null)
           }));
     }
     #endregion
@@ -78,8 +79,7 @@ namespace Protocol {
     public PlayerData(PlayerData other) : this() {
       uid_ = other.uid_;
       userName_ = other.userName_;
-      position_ = other.position_ != null ? other.position_.Clone() : null;
-      rotation_ = other.rotation_ != null ? other.rotation_.Clone() : null;
+      moveData_ = other.moveData_ != null ? other.moveData_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -113,27 +113,15 @@ namespace Protocol {
       }
     }
 
-    /// <summary>Field number for the "position" field.</summary>
-    public const int PositionFieldNumber = 3;
-    private global::Protocol.Position position_;
+    /// <summary>Field number for the "moveData" field.</summary>
+    public const int MoveDataFieldNumber = 3;
+    private global::Protocol.MoveData moveData_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Protocol.Position Position {
-      get { return position_; }
+    public global::Protocol.MoveData MoveData {
+      get { return moveData_; }
       set {
-        position_ = value;
-      }
-    }
-
-    /// <summary>Field number for the "rotation" field.</summary>
-    public const int RotationFieldNumber = 4;
-    private global::Protocol.Rotation rotation_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Protocol.Rotation Rotation {
-      get { return rotation_; }
-      set {
-        rotation_ = value;
+        moveData_ = value;
       }
     }
 
@@ -154,8 +142,7 @@ namespace Protocol {
       }
       if (Uid != other.Uid) return false;
       if (UserName != other.UserName) return false;
-      if (!object.Equals(Position, other.Position)) return false;
-      if (!object.Equals(Rotation, other.Rotation)) return false;
+      if (!object.Equals(MoveData, other.MoveData)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -165,8 +152,7 @@ namespace Protocol {
       int hash = 1;
       if (Uid != 0UL) hash ^= Uid.GetHashCode();
       if (UserName.Length != 0) hash ^= UserName.GetHashCode();
-      if (position_ != null) hash ^= Position.GetHashCode();
-      if (rotation_ != null) hash ^= Rotation.GetHashCode();
+      if (moveData_ != null) hash ^= MoveData.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -193,13 +179,9 @@ namespace Protocol {
         output.WriteRawTag(18);
         output.WriteString(UserName);
       }
-      if (position_ != null) {
+      if (moveData_ != null) {
         output.WriteRawTag(26);
-        output.WriteMessage(Position);
-      }
-      if (rotation_ != null) {
-        output.WriteRawTag(34);
-        output.WriteMessage(Rotation);
+        output.WriteMessage(MoveData);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -219,13 +201,9 @@ namespace Protocol {
         output.WriteRawTag(18);
         output.WriteString(UserName);
       }
-      if (position_ != null) {
+      if (moveData_ != null) {
         output.WriteRawTag(26);
-        output.WriteMessage(Position);
-      }
-      if (rotation_ != null) {
-        output.WriteRawTag(34);
-        output.WriteMessage(Rotation);
+        output.WriteMessage(MoveData);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -243,11 +221,8 @@ namespace Protocol {
       if (UserName.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(UserName);
       }
-      if (position_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Position);
-      }
-      if (rotation_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Rotation);
+      if (moveData_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(MoveData);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -267,17 +242,11 @@ namespace Protocol {
       if (other.UserName.Length != 0) {
         UserName = other.UserName;
       }
-      if (other.position_ != null) {
-        if (position_ == null) {
-          Position = new global::Protocol.Position();
+      if (other.moveData_ != null) {
+        if (moveData_ == null) {
+          MoveData = new global::Protocol.MoveData();
         }
-        Position.MergeFrom(other.Position);
-      }
-      if (other.rotation_ != null) {
-        if (rotation_ == null) {
-          Rotation = new global::Protocol.Rotation();
-        }
-        Rotation.MergeFrom(other.Rotation);
+        MoveData.MergeFrom(other.MoveData);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -303,17 +272,10 @@ namespace Protocol {
             break;
           }
           case 26: {
-            if (position_ == null) {
-              Position = new global::Protocol.Position();
+            if (moveData_ == null) {
+              MoveData = new global::Protocol.MoveData();
             }
-            input.ReadMessage(Position);
-            break;
-          }
-          case 34: {
-            if (rotation_ == null) {
-              Rotation = new global::Protocol.Rotation();
-            }
-            input.ReadMessage(Rotation);
+            input.ReadMessage(MoveData);
             break;
           }
         }
@@ -340,17 +302,10 @@ namespace Protocol {
             break;
           }
           case 26: {
-            if (position_ == null) {
-              Position = new global::Protocol.Position();
+            if (moveData_ == null) {
+              MoveData = new global::Protocol.MoveData();
             }
-            input.ReadMessage(Position);
-            break;
-          }
-          case 34: {
-            if (rotation_ == null) {
-              Rotation = new global::Protocol.Rotation();
-            }
-            input.ReadMessage(Rotation);
+            input.ReadMessage(MoveData);
             break;
           }
         }
@@ -360,16 +315,16 @@ namespace Protocol {
 
   }
 
-  public sealed partial class Position : pb::IMessage<Position>
+  public sealed partial class MoveData : pb::IMessage<MoveData>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<Position> _parser = new pb::MessageParser<Position>(() => new Position());
+    private static readonly pb::MessageParser<MoveData> _parser = new pb::MessageParser<MoveData>(() => new MoveData());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<Position> Parser { get { return _parser; } }
+    public static pb::MessageParser<MoveData> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -385,7 +340,7 @@ namespace Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Position() {
+    public MoveData() {
       OnConstruction();
     }
 
@@ -393,73 +348,73 @@ namespace Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Position(Position other) : this() {
-      x_ = other.x_;
-      y_ = other.y_;
-      z_ = other.z_;
+    public MoveData(MoveData other) : this() {
+      position_ = other.position_ != null ? other.position_.Clone() : null;
+      rotation_ = other.rotation_ != null ? other.rotation_.Clone() : null;
+      moveDir_ = other.moveDir_ != null ? other.moveDir_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Position Clone() {
-      return new Position(this);
+    public MoveData Clone() {
+      return new MoveData(this);
     }
 
-    /// <summary>Field number for the "x" field.</summary>
-    public const int XFieldNumber = 1;
-    private float x_;
+    /// <summary>Field number for the "position" field.</summary>
+    public const int PositionFieldNumber = 3;
+    private global::Protocol.Vec3 position_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public float X {
-      get { return x_; }
+    public global::Protocol.Vec3 Position {
+      get { return position_; }
       set {
-        x_ = value;
+        position_ = value;
       }
     }
 
-    /// <summary>Field number for the "y" field.</summary>
-    public const int YFieldNumber = 2;
-    private float y_;
+    /// <summary>Field number for the "rotation" field.</summary>
+    public const int RotationFieldNumber = 4;
+    private global::Protocol.Vec3 rotation_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public float Y {
-      get { return y_; }
+    public global::Protocol.Vec3 Rotation {
+      get { return rotation_; }
       set {
-        y_ = value;
+        rotation_ = value;
       }
     }
 
-    /// <summary>Field number for the "z" field.</summary>
-    public const int ZFieldNumber = 3;
-    private float z_;
+    /// <summary>Field number for the "moveDir" field.</summary>
+    public const int MoveDirFieldNumber = 5;
+    private global::Protocol.Vec3 moveDir_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public float Z {
-      get { return z_; }
+    public global::Protocol.Vec3 MoveDir {
+      get { return moveDir_; }
       set {
-        z_ = value;
+        moveDir_ = value;
       }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as Position);
+      return Equals(other as MoveData);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(Position other) {
+    public bool Equals(MoveData other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(X, other.X)) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Y, other.Y)) return false;
-      if (!pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.Equals(Z, other.Z)) return false;
+      if (!object.Equals(Position, other.Position)) return false;
+      if (!object.Equals(Rotation, other.Rotation)) return false;
+      if (!object.Equals(MoveDir, other.MoveDir)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -467,9 +422,9 @@ namespace Protocol {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (X != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(X);
-      if (Y != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Y);
-      if (Z != 0F) hash ^= pbc::ProtobufEqualityComparers.BitwiseSingleEqualityComparer.GetHashCode(Z);
+      if (position_ != null) hash ^= Position.GetHashCode();
+      if (rotation_ != null) hash ^= Rotation.GetHashCode();
+      if (moveDir_ != null) hash ^= MoveDir.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -488,17 +443,17 @@ namespace Protocol {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (X != 0F) {
-        output.WriteRawTag(13);
-        output.WriteFloat(X);
+      if (position_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(Position);
       }
-      if (Y != 0F) {
-        output.WriteRawTag(21);
-        output.WriteFloat(Y);
+      if (rotation_ != null) {
+        output.WriteRawTag(34);
+        output.WriteMessage(Rotation);
       }
-      if (Z != 0F) {
-        output.WriteRawTag(29);
-        output.WriteFloat(Z);
+      if (moveDir_ != null) {
+        output.WriteRawTag(42);
+        output.WriteMessage(MoveDir);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -510,17 +465,17 @@ namespace Protocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (X != 0F) {
-        output.WriteRawTag(13);
-        output.WriteFloat(X);
+      if (position_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(Position);
       }
-      if (Y != 0F) {
-        output.WriteRawTag(21);
-        output.WriteFloat(Y);
+      if (rotation_ != null) {
+        output.WriteRawTag(34);
+        output.WriteMessage(Rotation);
       }
-      if (Z != 0F) {
-        output.WriteRawTag(29);
-        output.WriteFloat(Z);
+      if (moveDir_ != null) {
+        output.WriteRawTag(42);
+        output.WriteMessage(MoveDir);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -532,14 +487,14 @@ namespace Protocol {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (X != 0F) {
-        size += 1 + 4;
+      if (position_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Position);
       }
-      if (Y != 0F) {
-        size += 1 + 4;
+      if (rotation_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Rotation);
       }
-      if (Z != 0F) {
-        size += 1 + 4;
+      if (moveDir_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(MoveDir);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -549,18 +504,27 @@ namespace Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(Position other) {
+    public void MergeFrom(MoveData other) {
       if (other == null) {
         return;
       }
-      if (other.X != 0F) {
-        X = other.X;
+      if (other.position_ != null) {
+        if (position_ == null) {
+          Position = new global::Protocol.Vec3();
+        }
+        Position.MergeFrom(other.Position);
       }
-      if (other.Y != 0F) {
-        Y = other.Y;
+      if (other.rotation_ != null) {
+        if (rotation_ == null) {
+          Rotation = new global::Protocol.Vec3();
+        }
+        Rotation.MergeFrom(other.Rotation);
       }
-      if (other.Z != 0F) {
-        Z = other.Z;
+      if (other.moveDir_ != null) {
+        if (moveDir_ == null) {
+          MoveDir = new global::Protocol.Vec3();
+        }
+        MoveDir.MergeFrom(other.MoveDir);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -577,16 +541,25 @@ namespace Protocol {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 13: {
-            X = input.ReadFloat();
+          case 26: {
+            if (position_ == null) {
+              Position = new global::Protocol.Vec3();
+            }
+            input.ReadMessage(Position);
             break;
           }
-          case 21: {
-            Y = input.ReadFloat();
+          case 34: {
+            if (rotation_ == null) {
+              Rotation = new global::Protocol.Vec3();
+            }
+            input.ReadMessage(Rotation);
             break;
           }
-          case 29: {
-            Z = input.ReadFloat();
+          case 42: {
+            if (moveDir_ == null) {
+              MoveDir = new global::Protocol.Vec3();
+            }
+            input.ReadMessage(MoveDir);
             break;
           }
         }
@@ -604,16 +577,25 @@ namespace Protocol {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
-          case 13: {
-            X = input.ReadFloat();
+          case 26: {
+            if (position_ == null) {
+              Position = new global::Protocol.Vec3();
+            }
+            input.ReadMessage(Position);
             break;
           }
-          case 21: {
-            Y = input.ReadFloat();
+          case 34: {
+            if (rotation_ == null) {
+              Rotation = new global::Protocol.Vec3();
+            }
+            input.ReadMessage(Rotation);
             break;
           }
-          case 29: {
-            Z = input.ReadFloat();
+          case 42: {
+            if (moveDir_ == null) {
+              MoveDir = new global::Protocol.Vec3();
+            }
+            input.ReadMessage(MoveDir);
             break;
           }
         }
@@ -623,16 +605,16 @@ namespace Protocol {
 
   }
 
-  public sealed partial class Rotation : pb::IMessage<Rotation>
+  public sealed partial class Vec3 : pb::IMessage<Vec3>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<Rotation> _parser = new pb::MessageParser<Rotation>(() => new Rotation());
+    private static readonly pb::MessageParser<Vec3> _parser = new pb::MessageParser<Vec3>(() => new Vec3());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<Rotation> Parser { get { return _parser; } }
+    public static pb::MessageParser<Vec3> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -648,7 +630,7 @@ namespace Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Rotation() {
+    public Vec3() {
       OnConstruction();
     }
 
@@ -656,7 +638,7 @@ namespace Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Rotation(Rotation other) : this() {
+    public Vec3(Vec3 other) : this() {
       x_ = other.x_;
       y_ = other.y_;
       z_ = other.z_;
@@ -665,8 +647,8 @@ namespace Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Rotation Clone() {
-      return new Rotation(this);
+    public Vec3 Clone() {
+      return new Vec3(this);
     }
 
     /// <summary>Field number for the "x" field.</summary>
@@ -708,12 +690,12 @@ namespace Protocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as Rotation);
+      return Equals(other as Vec3);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(Rotation other) {
+    public bool Equals(Vec3 other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -812,7 +794,7 @@ namespace Protocol {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(Rotation other) {
+    public void MergeFrom(Vec3 other) {
       if (other == null) {
         return;
       }

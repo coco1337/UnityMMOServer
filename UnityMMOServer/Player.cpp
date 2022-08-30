@@ -5,4 +5,5 @@ void Player::Init()
 {
 	_position = { 0, 0, 0 };
 	_rotation = { 0, 0, 0 };
+	_moveDir = { 0,0,0 };
 }

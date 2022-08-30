@@ -19,6 +19,7 @@ enum : uint16 {
   PKT_SC_SPAWN_RES = 1007,
   PKT_SC_SPAWN_NOTI = 1008,
   PKT_SC_DESPAWN_NOTI = 1009,
+  PKT_SC_MOVEDATA_NOTI = 1010,
 };
 
 // Custom Handlers
@@ -52,6 +53,7 @@ public:
 	static SendBufferRef MakeSendBuffer(Protocol::SC_SPAWN_RES& pkt) { return _MakeSendBuffer(pkt, PKT_SC_SPAWN_RES); }
 	static SendBufferRef MakeSendBuffer(Protocol::SC_SPAWN_NOTI& pkt) { return _MakeSendBuffer(pkt, PKT_SC_SPAWN_NOTI); }
 	static SendBufferRef MakeSendBuffer(Protocol::SC_DESPAWN_NOTI& pkt) { return _MakeSendBuffer(pkt, PKT_SC_DESPAWN_NOTI); }
+	static SendBufferRef MakeSendBuffer(Protocol::SC_MOVEDATA_NOTI& pkt) { return _MakeSendBuffer(pkt, PKT_SC_MOVEDATA_NOTI); }
 
 private:
   template<typename PacketType, typename ProcessFunc>
