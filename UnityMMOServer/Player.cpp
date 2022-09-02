@@ -7,7 +7,7 @@ void Player::Init()
 	_moveData.mutable_movedir()->set_y(0);
 	_moveData.mutable_movedir()->set_z(0);
 	_moveData.mutable_position()->set_x(0);
-	_moveData.mutable_position()->set_y(0);
+	_moveData.mutable_position()->set_y(1);
 	_moveData.mutable_position()->set_z(0);
 	_moveData.mutable_rotation()->set_x(0);
 	_moveData.mutable_rotation()->set_y(0);

@@ -9,11 +9,25 @@ shared_ptr<Room> GRoom = make_shared<Room>();
 void Room::Enter(PlayerRef player)
 {
 	_players[player->playerId] = player;
+	player->Init();
+	auto gameSession = player->ownerSession.lock();
+	if (gameSession == nullptr)
+	{
+		GConsoleLogger->WriteStdErr(Color::RED, L"Enter error\n");
+		return;
+	}
+	
 	GConsoleLogger->WriteStdOut(Color::BLUE, L"player joined %d\n", player->playerId);
+	gameSession->_room = GRoom;
 
 	// broadcast other player
 	Protocol::SC_SPAWN_NOTI noti;
 	noti.set_id(PKT_SC_SPAWN_NOTI);
+	Protocol::PlayerData playerData;
+	playerData.set_uid(player->playerId);
+	playerData.set_username(player->name);
+	playerData.mutable_movedata()->CopyFrom(player->GetMoveData());
+	noti.mutable_player()->CopyFrom(playerData);
 
 	BroadcastOtherPlayers(ClientPacketHandler::MakeSendBuffer(noti), player->playerId);
 }
@@ -24,6 +38,7 @@ void Room::Leave(PlayerRef player)
 
 	Protocol::SC_DESPAWN_NOTI noti;
 	noti.set_id(PKT_SC_DESPAWN_NOTI);
+	noti.set_uid(player->playerId);
 	BroadcastOtherPlayers(ClientPacketHandler::MakeSendBuffer(noti), player->playerId);
 	_players.erase(player->playerId);	
 }
@@ -34,6 +49,7 @@ void Room::Broadcast(SendBufferRef sendBuffer)
 	for (auto& p : _players)
 	{
 		gameSession = p.second->ownerSession.lock();
+		if (gameSession == nullptr) continue;
 		gameSession->Send(sendBuffer);
 	}
 }
@@ -46,6 +62,7 @@ void Room::BroadcastOtherPlayers(SendBufferRef sendBuffer, uint64 uid)
 		if (p.first != uid)
 		{
 			gameSession = p.second->ownerSession.lock();
+			if (gameSession == nullptr) continue;
 			gameSession->Send(sendBuffer);
 		}
 	}
@@ -85,7 +102,8 @@ void Room::HandleSpawn(PlayerRef player)
 	res.set_packetresult(Protocol::PacketErrorType::PACKET_ERROR_TYPE_SUCCESS);
 	res.set_myid(player->playerId);
 
-	Broadcast(ClientPacketHandler::MakeSendBuffer(res));
+	auto gameSession = player->ownerSession.lock();
+	gameSession->Send(ClientPacketHandler::MakeSendBuffer(res));
 }
 
 void Room::HandleMove(PlayerRef player, Protocol::CS_MOVE_REQ pkt)
