@@ -7,8 +7,8 @@ public:
 	void Init();
 	Protocol::MoveData GetMoveData() { return _moveData; }
 	void UpdateMoveData(const Protocol::MoveData& moveData);
-	Player() { GConsoleLogger->WriteStdOut(Color::GREEN, L"Player()\n"); }
-	~Player() { GConsoleLogger->WriteStdOut(Color::GREEN, L"~Player()\n"); }
+	// Player() { GConsoleLogger->WriteStdOut(Color::GREEN, L"Player()\n"); }
+	// ~Player() { GConsoleLogger->WriteStdOut(Color::GREEN, L"~Player()\n"); }
 
 public:
 	uint64 playerId = 0;

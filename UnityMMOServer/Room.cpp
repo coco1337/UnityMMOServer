@@ -20,7 +20,12 @@ void Room::Enter(PlayerRef player)
 
 void Room::Leave(PlayerRef player)
 {
-	_players.erase(player->playerId);
+	GConsoleLogger->WriteStdOut(Color::BLUE, L"player leave %d\n", player->playerId);
+
+	Protocol::SC_DESPAWN_NOTI noti;
+	noti.set_id(PKT_SC_DESPAWN_NOTI);
+	BroadcastOtherPlayers(ClientPacketHandler::MakeSendBuffer(noti), player->playerId);
+	_players.erase(player->playerId);	
 }
 
 void Room::Broadcast(SendBufferRef sendBuffer)
