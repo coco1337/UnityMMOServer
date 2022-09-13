@@ -118,6 +118,9 @@ cv.wait(lock, []() {return q.empty() == false; }); // q.empty() == false 까지 기
 // 2) 조건 확인, 만족 => 빠져나와서 코드 실행, 불만족 => Lock을 풀고 대기상태로 전환(이것 때문에 unique_lock 사용(원할때 걸고 풀 수 있도록))
 // notify_one 을 했으면 항상 조건식을 만족하지 않을까? => Superious Wakeup(가짜 기상?) 멀티스레드 환경에서는 notify_one 할때는 lock 잡고있는것 아니기때문에 공용변수 변경 가능
 
+Spurious wakeup
+POSIX나 모든 OS에서 signal을 줬을 때 하나만 깨어나는게 아니고
+동시에 여러 wait 된 cv들이 깨어나는 현상. OS의 성능 이슈
 ----------------------------------------------------------
 Future - 명시적으로 스레드를 만들 필요 없이 멀티스레드 간접적으로 사용
 데이터 시트 불러올때 사용
@@ -180,6 +183,11 @@ promise - 결과물을 promise를 통해 future로 받아줌
 packaged_task - 원하는 함수의 실행 결과를 packaged_task를 통해 future로 받아줌
 
 비동기(실행시점이 다름) != 멀티스레드
+
+- thread는 병렬 처리를 위한 흐름 생성하고 제어하기 위한 기본적인 함수 제공
+- async 같은 task는 promise-future사이의 통신 흐름을 만들게 됨
+- 동기화 과정에서 thread 생성 여부는 async 인자에 따라 다르게 
+- 일반적인 사용에선 thread보다 task가 안전
 
 ----------------------------------------------------------
 캐시
